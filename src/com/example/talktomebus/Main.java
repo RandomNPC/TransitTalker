@@ -7,6 +7,7 @@ import java.util.Locale;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -29,6 +30,7 @@ public class Main extends Activity implements OnClickListener {
 	boolean rotate = true;
 	TextView textTOP, textBOT;
 	TextToSpeech tts;
+	AudioManager aM;
 	LocationManager manager;
 	LocationListener listener;
 
@@ -41,7 +43,7 @@ public class Main extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				if (status != TextToSpeech.ERROR) {
 					tts.setLanguage(Locale.US);
-					tts.speak(speakStopName, TextToSpeech.QUEUE_ADD, null);
+					tts.speak("Approaching" + speakStopName, TextToSpeech.QUEUE_ADD, null);
 				}
 			}
 		});
@@ -205,7 +207,9 @@ public class Main extends Activity implements OnClickListener {
 		// Settings
 		setRequestedOrientation(8);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+		aM = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		aM.setStreamVolume(AudioManager.STREAM_MUSIC, aM.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+	
 		// LL
 		
 		//addRoute("10","A","A DOWNTOWN/5TH STREET/ALHAMBRA",route);
@@ -274,6 +278,7 @@ public class Main extends Activity implements OnClickListener {
 					Toast.makeText(Main.this, "ED WAS HERE", Toast.LENGTH_LONG).show();
 					time=seconds;
 				}*/
+
 
 				latitude = (double) currentLocation.getLatitude();
 				longitude = (double) currentLocation.getLongitude();
@@ -366,8 +371,7 @@ public class Main extends Activity implements OnClickListener {
 				if ((destinationCode.length() <=4) && selectRoute(destinationCode, route) > -1) {
 					textTOP.setText(route.get(selectRoute(destinationCode, route)).getHS());
 					textBOT.setText(route.get(selectRoute(destinationCode, route)).getbusStop());
-					manager.requestLocationUpdates(
-							LocationManager.GPS_PROVIDER, 500, 0, listener);
+					manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
 				} else {
 					textTOP.setText("Invalid Pattern");
 					textBOT.setText("Contact Dispatch");
