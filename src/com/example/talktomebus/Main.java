@@ -21,13 +21,9 @@ import android.widget.TextView;
 
 public class Main extends Activity implements OnClickListener {
 
-	int time;
-
-	double latitude = 0, longitude = 0, minDistance = 0.00009;
-	double LatA=0,LatB=0,LonA=0,LonB=0;
+	static double minDistance = 0.00009;
 	String destinationCode = "";
 	boolean setDestination = false;
-	boolean rotate = true;
 	TextView textTOP, textBOT;
 	TextToSpeech tts;
 	AudioManager aM;
@@ -43,7 +39,7 @@ public class Main extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				if (status != TextToSpeech.ERROR) {
 					tts.setLanguage(Locale.US);
-					tts.speak("Approaching" + speakStopName, TextToSpeech.QUEUE_ADD, null);
+					tts.speak("Approaching " + speakStopName, TextToSpeech.QUEUE_ADD, null);
 				}
 			}
 		});
@@ -153,7 +149,7 @@ public class Main extends Activity implements OnClickListener {
 			route.addStop(rC, hS, 38.54003, -121.74605, "Hutchison Dr & A St ","EB"); // 000
 			route.addStop(rC, hS, 38.5391799, -121.7499899, "Hutchison & Shields Library ","WB"); // 168
 			route.addStop(rC, hS, 38.53919, -121.74837, "Hutchison Dr & Art Building ","EB"); // 169
-			route.addStop(rC, hS, 38.54064, -121.73854,"Richards Blvd & Olive Dr ","SB"); // 004
+			route.addStop(rC, hS, 38.54064, -121.73854,"Richards Blvd & Olive Dr S","SB"); // 004
 			route.addStop(rC, hS, 38.54116, -121.72219,"Lillard Dr & Cowell Blvd ","EB"); // 297
 			route.addStop(rC, hS, 38.54324, -121.7225299,"Cowell Blvd & Halsey Cir ","WB"); // 045
 			route.addStop(rC, hS, 38.54166, -121.7173499,"Lillard Dr & Evans Ct ","EB"); // 174
@@ -163,12 +159,16 @@ public class Main extends Activity implements OnClickListener {
 			route.addStop(rC, hS, 38.5398399, -121.73081,"Cowell Blvd & Research Park S Dr ","EB"); // 035
 		} else if (routeName == "J-EXP") {
 		} else if (routeName == "W-EXP") {
+		} else if(routeName == "DEBUG"){
+			route.addStop(rC, hS, 38.544906, -121.74051599999999, "debug", "NB");
 		}
+		
 
 	}
 
-	void sayStop(int pos, List<LL> route, double bLat, double bLong, double minDistance, double bearing, TextView update) {
-		String stop = route.get(pos).approach(bLat, bLong, minDistance,bearing);
+	void sayStop(int pos, List<LL> route, double bLat, double bLong, double minDistance, double bearing, TextView update, Location currentLocation) {
+
+		String stop = route.get(pos).approach(bLat, bLong, minDistance,bearing,update,currentLocation);
 		if (stop != "") {
 			speakToMe(stop);
 			update.setText(stop);
@@ -194,10 +194,6 @@ public class Main extends Activity implements OnClickListener {
 
 	void resetApproach(List<LL> route, int pos){route.get(pos).resetApproach();}
 	
-	double getBearing(double Ax,double Ay,double Bx, double By){
-		double ratio = (By-Ax)/Math.sqrt(Math.pow((By-Ay), 2)+Math.pow((Bx-Ax), 2));
-		return Math.acos(ratio) * 180/Math.PI;
-	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// default settings
@@ -211,7 +207,7 @@ public class Main extends Activity implements OnClickListener {
 		aM.setStreamVolume(AudioManager.STREAM_MUSIC, aM.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 	
 		// LL
-		
+		addRoute("0","DEBUG","DEBUG",route);
 		//addRoute("10","A","A DOWNTOWN/5TH STREET/ALHAMBRA",route);
 		//addRoute("11","A-LTD","A-LTD DOWNTOWN/5TH STREET/CANTRILL",route);
 		//addRoute("20","B","B SYCAMORE/DRAKE",route);
@@ -269,32 +265,7 @@ public class Main extends Activity implements OnClickListener {
 
 		listener = new LocationListener() {
 			public void onLocationChanged(Location currentLocation) {
-				/*Calendar c = Calendar.getInstance(); 
-				int seconds = c.get(Calendar.SECOND);
-				
-				seconds=(int)(seconds/5);
-				
-				if(time<seconds){
-					Toast.makeText(Main.this, "ED WAS HERE", Toast.LENGTH_LONG).show();
-					time=seconds;
-				}*/
-
-
-				latitude = (double) currentLocation.getLatitude();
-				longitude = (double) currentLocation.getLongitude();
-
-				if(rotate){
-					LatA = latitude;
-					LonA = longitude;
-					rotate = false;
-				}
-				else{
-					LatB = latitude;
-					LonB = longitude;
-					rotate = true;
-				}
-				
-				if(LatA!=0 && LonA!=0 && LatB!=0 && LonB!=0) sayStop(selectRoute(destinationCode, route), route, latitude,longitude, getBearing(LatA,LonA,LatB,LonB),minDistance,textBOT);
+				sayStop(selectRoute(destinationCode, route), route, (double)currentLocation.getLatitude(),(double) currentLocation.getLongitude(),minDistance,currentLocation.getBearing(),textBOT,currentLocation);
 			}
 
 			public void onProviderDisabled(String arg0){}
@@ -314,7 +285,7 @@ public class Main extends Activity implements OnClickListener {
 		if (cue.getId() == R.id.buttonClear) {
 			setDestination = true;
 			manager.removeUpdates(listener);
-			//if(destinationCode!="")resetApproach(route,selectRoute(destinationCode, route));
+			resetApproach(route,selectRoute(destinationCode, route));
 		}
 
 		if (setDestination) {

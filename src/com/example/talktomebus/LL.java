@@ -1,5 +1,8 @@
 package com.example.talktomebus;
 
+import android.location.Location;
+import android.widget.TextView;
+
 public class LL {
 	private Node head;
 	private Node tail;
@@ -32,19 +35,19 @@ public class LL {
 	
 	boolean inDirection(double bearing, String busdirection){
 		
-		if(busdirection =="NB"){
+		if(busdirection.equals("NB")){
 			if((bearing >=270 && bearing <= 360) || (bearing >=0 && bearing <= 90)) return true;
 			else return false;
 		}
-		else if(busdirection == "SB"){
+		else if(busdirection.equals("SB")){
 			if(bearing >=90 && bearing <= 270) return true;
 			else return false;
 		}
-		else if(busdirection == "EB"){
+		else if(busdirection.equals("EB")){
 			if(bearing >=0 && bearing <= 180) return true;
 			else return false;
 		}
-		else if(busdirection == "WB"){
+		else if(busdirection.equals("WB")){
 			if(bearing >=180 && bearing <= 360) return true;
 			else return false;
 		}
@@ -55,10 +58,15 @@ public class LL {
 		return Math.sqrt(Math.pow((stopLat-busLat), 2)+Math.pow((stopLong-busLong), 2));
 	}
 	 
-	public String approach(double sLg, double sLn, double minDistance,double bearing){
+	public String approach(double sLg, double sLn, double minDistance,double bearing, TextView test, Location currentLocation){
+		
+		float[] distance = new float[1];
 		
 		for(Node checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){
-			if(bustoStop(checkStop.getLatitude(),checkStop.getLongitude(),sLg,sLn) < minDistance && checkStop.silence()==false && inDirection(bearing,checkStop.stopDirection())){
+			
+			Location.distanceBetween(sLg, checkStop.getLatitude(), sLn, checkStop.getLongitude(), distance);
+			
+			if(inDirection(bearing,checkStop.stopDirection()) && distance[0]<minDistance && !checkStop.silence()){
 				checkStop.setPass(true);
 				return checkStop.getStop();
 			}
@@ -68,8 +76,13 @@ public class LL {
 	}
 	
 	public void resetApproach(){
-		for(Node checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){
-			checkStop.setPass(false);
+		
+		Node checkStop = head;
+		
+		if(head!=null){		
+			for(checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){
+				checkStop.setPass(false);
+			}
 		}	
 	}
 	
