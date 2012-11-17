@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 public class Main extends Activity implements OnClickListener {
 
-	static double minDistance = 0.00009;
+	static double minDistance = 10;//0.00009;
 	String destinationCode = "";
 	boolean setDestination = false;
 	TextView textTOP, textBOT;
@@ -47,6 +47,8 @@ public class Main extends Activity implements OnClickListener {
 
 	void populateRoute(LL route, String routeName, String rC, String hS) {
 
+		route.addStop(rC, hS, 9999, 9999, "", "");
+		
 		if (routeName == "A") {
 		} else if (routeName == "A-LTD") {
 		} else if (routeName == "B") {
@@ -192,7 +194,7 @@ public class Main extends Activity implements OnClickListener {
 		return found;
 	}
 
-	void resetApproach(List<LL> route, int pos){route.get(pos).resetApproach();}
+	void resetApproach(List<LL> route){for(int pos = 0; pos < route.size(); pos++) route.get(pos).resetApproach();}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -208,27 +210,27 @@ public class Main extends Activity implements OnClickListener {
 	
 		// LL
 		addRoute("0","DEBUG","DEBUG",route);
-		//addRoute("10","A","A DOWNTOWN/5TH STREET/ALHAMBRA",route);
-		//addRoute("11","A-LTD","A-LTD DOWNTOWN/5TH STREET/CANTRILL",route);
-		//addRoute("20","B","B SYCAMORE/DRAKE",route);
-		//addRoute("30","C","C SYCAMORE/WAKE FOREST",route);
-		//addRoute("40","D","D LAKE BLVD./ARLINGTON",route);
-		//addRoute("50","E","E DOWNTOWN/F ST./J ST.",route);
-		//addRoute("60","F","F OAK AVE/E. ALVARADO/CATALINA",route);
-		//addRoute("70","G","G ANDERSON/ALVERADO/N. SYCAMORE",route);
+		addRoute("10","A","A DOWNTOWN/5TH STREET/ALHAMBRA",route);
+		addRoute("11","A-LTD","A-LTD DOWNTOWN/5TH STREET/CANTRILL",route);
+		addRoute("20","B","B SYCAMORE/DRAKE",route);
+		addRoute("30","C","C SYCAMORE/WAKE FOREST",route);
+		addRoute("40","D","D LAKE BLVD./ARLINGTON",route);
+		addRoute("50","E","E DOWNTOWN/F ST./J ST.",route);
+		addRoute("60","F","F OAK AVE/E. ALVARADO/CATALINA",route);
+		addRoute("70","G","G ANDERSON/ALVERADO/N. SYCAMORE",route);
 		addRoute("100", "J", "J ANDERSON/ALVERADO/N. SYCAMORE", route);
-		//addRoute("110","K","K LAKE BLVD./ARTHUR ST.",route);
-		//addRoute("120","L","L E. 8TH ST./POLE LINE/MOORE/LOYOLA",route);
-		//addRoute("130","M","M B ST./COWELL/DREW",route);
+		addRoute("110","K","K LAKE BLVD./ARTHUR ST.",route);
+		addRoute("120","L","L E. 8TH ST./POLE LINE/MOORE/LOYOLA",route);
+		addRoute("130","M","M B ST./COWELL/DREW",route);
 		addRoute("150", "O", "O SHOPPERS SHUTTLE", route);// DOWNTOWN/TARGET/WEST VILLAGE
-		//addRoute("160","P","P DAVIS PERIMETER COUNTER CLOCKWISE",route);
-		//addRoute("170","Q","Q DAVIS PERIMETER CLOCKWISE",route);
-		//addRoute("190","S","S HOLMES/HARPER JR. HIGH",route);
-		//addRoute("200","T","T DAVIS HIGH SCHOOL/MOORE BLVD/ALHAMBRA",route);
-		//addRoute("220","V","V WEST VILLAGE",route);
+		addRoute("160","P","P DAVIS PERIMETER COUNTER CLOCKWISE",route);
+		addRoute("170","Q","Q DAVIS PERIMETER CLOCKWISE",route);
+		addRoute("190","S","S HOLMES/HARPER JR. HIGH",route);
+		addRoute("200","T","T DAVIS HIGH SCHOOL/MOORE BLVD/ALHAMBRA",route);
+		addRoute("220","V","V WEST VILLAGE",route);
 		addRoute("230", "W", "W COWELL/LILLARD/DRUMMOND", route);
-		//addRoute("101","J-EXP","J-EXP TO N.SYCAMORE VIA 113",route);
-		//addRoute("020","W-EXP","W-EXP TO COWELL & VALDORA",route);
+		addRoute("101","J-EXP","J-EXP TO N.SYCAMORE VIA 113",route);
+		addRoute("020","W-EXP","W-EXP TO COWELL & VALDORA",route);
 
 		// UI
 		Button key1 = (Button) findViewById(R.id.button1);
@@ -285,7 +287,7 @@ public class Main extends Activity implements OnClickListener {
 		if (cue.getId() == R.id.buttonClear) {
 			setDestination = true;
 			manager.removeUpdates(listener);
-			resetApproach(route,selectRoute(destinationCode, route));
+			resetApproach(route);
 		}
 
 		if (setDestination) {
