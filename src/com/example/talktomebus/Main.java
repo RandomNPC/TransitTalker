@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 public class Main extends Activity implements OnClickListener {
 
-	static double minDistance = 10;//0.00009;
+	double minDistance = 0.001; //0.00009;
 	String destinationCode = "";
 	boolean setDestination = false;
 	TextView textTOP, textBOT;
@@ -47,7 +47,7 @@ public class Main extends Activity implements OnClickListener {
 
 	void populateRoute(LL route, String routeName, String rC, String hS) {
 
-		route.addStop(rC, hS, 9999, 9999, "", "");
+		//route.addStop(rC, hS, 9999, 9999, "", "");
 		
 		if (routeName == "A") {
 		} else if (routeName == "A-LTD") {
@@ -162,14 +162,15 @@ public class Main extends Activity implements OnClickListener {
 		} else if (routeName == "J-EXP") {
 		} else if (routeName == "W-EXP") {
 		} else if(routeName == "DEBUG"){
-			route.addStop(rC, hS, 38.544906, -121.74051599999999, "debug", "NB");
+			//route.addStop(rC, hS, 38.542008, -121.719196, "debug", "SB");
+			route.addStop(rC, hS, 38.5419763, -121.7911, "Gabe's Room", "EB");
 		}
 		
 
 	}
 
-	void sayStop(int pos, List<LL> route, double bLat, double bLong, double minDistance, double bearing, TextView update, Location currentLocation) {
-
+	void sayStop(int pos, List<LL> route, double bLat, double bLong, double minDistance, float bearing, TextView update, Location currentLocation) {
+		
 		String stop = route.get(pos).approach(bLat, bLong, minDistance,bearing,update,currentLocation);
 		if (stop != "") {
 			speakToMe(stop);
@@ -210,7 +211,7 @@ public class Main extends Activity implements OnClickListener {
 	
 		// LL
 		addRoute("0","DEBUG","DEBUG",route);
-		addRoute("10","A","A DOWNTOWN/5TH STREET/ALHAMBRA",route);
+		/*addRoute("10","A","A DOWNTOWN/5TH STREET/ALHAMBRA",route);
 		addRoute("11","A-LTD","A-LTD DOWNTOWN/5TH STREET/CANTRILL",route);
 		addRoute("20","B","B SYCAMORE/DRAKE",route);
 		addRoute("30","C","C SYCAMORE/WAKE FOREST",route);
@@ -230,7 +231,7 @@ public class Main extends Activity implements OnClickListener {
 		addRoute("220","V","V WEST VILLAGE",route);
 		addRoute("230", "W", "W COWELL/LILLARD/DRUMMOND", route);
 		addRoute("101","J-EXP","J-EXP TO N.SYCAMORE VIA 113",route);
-		addRoute("020","W-EXP","W-EXP TO COWELL & VALDORA",route);
+		addRoute("020","W-EXP","W-EXP TO COWELL & VALDORA",route);*/
 
 		// UI
 		Button key1 = (Button) findViewById(R.id.button1);
@@ -267,6 +268,7 @@ public class Main extends Activity implements OnClickListener {
 
 		listener = new LocationListener() {
 			public void onLocationChanged(Location currentLocation) {
+				textTOP.setText(currentLocation.getLatitude() + " " + currentLocation.getLongitude());
 				sayStop(selectRoute(destinationCode, route), route, (double)currentLocation.getLatitude(),(double) currentLocation.getLongitude(),minDistance,currentLocation.getBearing(),textBOT,currentLocation);
 			}
 
@@ -283,7 +285,6 @@ public class Main extends Activity implements OnClickListener {
 	}
 
 	public void onClick(View cue) {
-		// TODO Auto-generated method stub
 		if (cue.getId() == R.id.buttonClear) {
 			setDestination = true;
 			manager.removeUpdates(listener);
@@ -342,7 +343,7 @@ public class Main extends Activity implements OnClickListener {
 				textBOT.setText("Please Wait...");
 
 				if ((destinationCode.length() <=4) && selectRoute(destinationCode, route) > -1) {
-					textTOP.setText(route.get(selectRoute(destinationCode, route)).getHS());
+					textTOP.setText(route.get(selectRoute(destinationCode, route)).getHS());	
 					textBOT.setText(route.get(selectRoute(destinationCode, route)).getbusStop());
 					manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
 				} else {

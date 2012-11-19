@@ -54,19 +54,24 @@ public class LL {
 		else return false;	
 	}
 	
-	double bustoStop(double stopLat,double stopLong,double busLat,double busLong){
+	double bustoStop(double stopLat,double stopLong,double busLat,double busLong,TextView hi){
+		hi.setText("stopLat: " + stopLat + "stopLong: " + stopLong + " busLat: " + busLat + " busLong: " + busLong);
 		return Math.sqrt(Math.pow((stopLat-busLat), 2)+Math.pow((stopLong-busLong), 2));
 	}
-	 
-	public String approach(double sLg, double sLn, double minDistance,double bearing, TextView test, Location currentLocation){
-		
-		float[] distance = new float[1];
+	
+	public String approach(double sLg, double sLn, double minDistance,float bearing, TextView test, Location currentLocation){
 		
 		for(Node checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){
 			
-			Location.distanceBetween(sLg, checkStop.getLatitude(), sLn, checkStop.getLongitude(), distance);
+			//Location.distanceBetween(sLg, checkStop.getLatitude(), sLn, checkStop.getLongitude(), distance);
+			//test.setText("StopLat: "+ checkStop.getLatitude() +" StopLon: "+ checkStop.getLongitude()+" BusLat: " +sLg +" BusLon: "+ sLn + " " +bustoStop(sLg,sLn,checkStop.getLatitude(),checkStop.getLongitude(),test));
+			//test.setText("0: "+distance[0] + " 1: "+distance[1] + " 2: "+distance[2] + ""  );
 			
-			if(inDirection(bearing,checkStop.stopDirection()) && distance[0]<minDistance && !checkStop.silence()){
+			//test.setText(""+bustoStop(sLg,checkStop.getLatitude(),sLn,checkStop.getLongitude()));
+
+			//test.setText("Bearing: "+bearing + " Distance: " + bustoStop(sLg,sLn,checkStop.getLatitude(),checkStop.getLongitude()));
+			
+			if(bustoStop(sLg,sLn,checkStop.getLatitude(),checkStop.getLongitude(),test)<minDistance /*&& inDirection(bearing,checkStop.stopDirection())*/ && !checkStop.silence()){
 				checkStop.setPass(true);
 				return checkStop.getStop();
 			}
