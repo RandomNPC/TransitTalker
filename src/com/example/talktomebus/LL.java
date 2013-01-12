@@ -1,7 +1,6 @@
 package com.example.talktomebus;
 
 import android.location.Location;
-import android.widget.TextView;
 
 public class LL {
 	private Node head;
@@ -54,24 +53,29 @@ public class LL {
 		else return false;	
 	}
 	
-	double bustoStop(double stopLat,double stopLong,double busLat,double busLong,TextView hi){
-		hi.setText("stopLat: " + stopLat + "stopLong: " + stopLong + " busLat: " + busLat + " busLong: " + busLong);
-		return Math.sqrt(Math.pow((stopLat-busLat), 2)+Math.pow((stopLong-busLong), 2));
+	double bustoStop(double stopLat,double stopLong,double busLat,double busLong){
+		
+		Location bus = new Location("busLocation");
+		bus.setLatitude(busLat);
+		bus.setLongitude(busLong);
+		Location stop = new Location("busStop");
+		stop.setLatitude(stopLat);
+		stop.setLongitude(stopLong);
+		
+		double finalResult = bus.distanceTo(stop);
+		
+		bus = null;
+		stop = null;
+		
+		return finalResult;
+		
+		//return Math.sqrt(Math.pow((stopLat-busLat), 2)+Math.pow((stopLong-busLong), 2));
 	}
 	
-	public String approach(double sLg, double sLn, double minDistance,float bearing, TextView test, Location currentLocation){
+	public String approach(double bLat, double bLong, double minDistance, float bearing){
 		
-		for(Node checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){
-			
-			//Location.distanceBetween(sLg, checkStop.getLatitude(), sLn, checkStop.getLongitude(), distance);
-			//test.setText("StopLat: "+ checkStop.getLatitude() +" StopLon: "+ checkStop.getLongitude()+" BusLat: " +sLg +" BusLon: "+ sLn + " " +bustoStop(sLg,sLn,checkStop.getLatitude(),checkStop.getLongitude(),test));
-			//test.setText("0: "+distance[0] + " 1: "+distance[1] + " 2: "+distance[2] + ""  );
-			
-			//test.setText(""+bustoStop(sLg,checkStop.getLatitude(),sLn,checkStop.getLongitude()));
-
-			//test.setText("Bearing: "+bearing + " Distance: " + bustoStop(sLg,sLn,checkStop.getLatitude(),checkStop.getLongitude()));
-			
-			if(bustoStop(sLg,sLn,checkStop.getLatitude(),checkStop.getLongitude(),test)<minDistance /*&& inDirection(bearing,checkStop.stopDirection())*/ && !checkStop.silence()){
+		for(Node checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){			
+			if(bustoStop(bLat,bLong,checkStop.getLatitude(),checkStop.getLongitude())<minDistance && inDirection(bearing,checkStop.stopDirection()) && !checkStop.silence()){
 				checkStop.setPass(true);
 				return checkStop.getStop();
 			}
@@ -81,13 +85,9 @@ public class LL {
 	}
 	
 	public void resetApproach(){
-		
-		Node checkStop = head;
-		
+		Node checkStop = head;	
 		if(head!=null){		
-			for(checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){
-				checkStop.setPass(false);
-			}
+			for(checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){checkStop.setPass(false);}
 		}	
 	}
 	

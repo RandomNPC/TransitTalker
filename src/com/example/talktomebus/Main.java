@@ -8,31 +8,96 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class Main extends Activity implements OnClickListener {
+public class Main extends Activity implements OnClickListener{
 
-	double minDistance = 0.001; //0.00009;
-	String destinationCode = "";
-	boolean setDestination = false;
-	TextView textTOP, textBOT;
-	TextToSpeech tts;
-	AudioManager aM;
-	LocationManager manager;
 	LocationListener listener;
-
+	LocationManager manager;
+	TextToSpeech tts;
+	String destinationCode="";
 	List<LL> route = new ArrayList<LL>();
+	
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        //Settings
+		setRequestedOrientation(8);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		AudioManager aM = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		aM.setStreamVolume(AudioManager.STREAM_MUSIC, aM.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 
-	void speakToMe(final String speakStopName) {
+		Button keyClear = (Button) findViewById(R.id.buttonClear);
+		keyClear.setOnClickListener(this);
+		
+		//keyClear.performClick();
+		setupRoutes(route);
+		
+		manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		listener = new LocationListener() {
+			
+			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
+			public void onProviderEnabled(String arg0) {}
+			public void onProviderDisabled(String arg0) {}
+			public void onLocationChanged(Location currentLocation) {
+				
+				TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
+				
+				//Not used at this time
+				//TextView textTOP = (TextView) findViewById(R.id.displayTOP);
+				
+				sayStop(selectRoute(destinationCode, route),
+						route, 
+						currentLocation.getLatitude(),
+						currentLocation.getLongitude(),
+						10,
+						currentLocation.getBearing(),
+						textBOT);
+			}
+		};
+
+    }
+
+    private void setupRoutes(List<LL> route) {
+		addRoute("0","DEBUG","DEBUG",route);
+		/*addRoute("10","A","A DOWNTOWN/5TH STREET/ALHAMBRA",route);
+		addRoute("11","A-LTD","A-LTD DOWNTOWN/5TH STREET/CANTRILL",route);
+		addRoute("20","B","B SYCAMORE/DRAKE",route);
+		addRoute("30","C","C SYCAMORE/WAKE FOREST",route);
+		addRoute("40","D","D LAKE BLVD./ARLINGTON",route);
+		addRoute("50","E","E DOWNTOWN/F ST./J ST.",route);
+		addRoute("60","F","F OAK AVE/E. ALVARADO/CATALINA",route);
+		addRoute("70","G","G ANDERSON/ALVERADO/N. SYCAMORE",route);
+		addRoute("100", "J", "J ANDERSON/ALVERADO/N. SYCAMORE", route);
+		addRoute("110","K","K LAKE BLVD./ARTHUR ST.",route);
+		addRoute("120","L","L E. 8TH ST./POLE LINE/MOORE/LOYOLA",route);
+		addRoute("130","M","M B ST./COWELL/DREW",route);
+		addRoute("150", "O", "O SHOPPERS SHUTTLE", route);// DOWNTOWN/TARGET/WEST VILLAGE
+		addRoute("160","P","P DAVIS PERIMETER COUNTER CLOCKWISE",route);
+		addRoute("170","Q","Q DAVIS PERIMETER CLOCKWISE",route);
+		addRoute("190","S","S HOLMES/HARPER JR. HIGH",route);
+		addRoute("200","T","T DAVIS HIGH SCHOOL/MOORE BLVD/ALHAMBRA",route);
+		addRoute("220","V","V WEST VILLAGE",route);
+		addRoute("230", "W", "W COWELL/LILLARD/DRUMMOND", route);
+		addRoute("101","J-EXP","J-EXP TO N.SYCAMORE VIA 113",route);
+		addRoute("020","W-EXP","W-EXP TO COWELL & VALDORA",route);*/
+	}
+
+
+	private void speakToMe(final String speakStopName) {
 		tts = new TextToSpeech(Main.this, new TextToSpeech.OnInitListener() {
 
 			public void onInit(int status) {
@@ -45,9 +110,7 @@ public class Main extends Activity implements OnClickListener {
 		});
 	}
 
-	void populateRoute(LL route, String routeName, String rC, String hS) {
-
-		//route.addStop(rC, hS, 9999, 9999, "", "");
+	private void populateRoute(LL route, String routeName, String rC, String hS) {
 		
 		if (routeName == "A") {
 		} else if (routeName == "A-LTD") {
@@ -169,16 +232,16 @@ public class Main extends Activity implements OnClickListener {
 
 	}
 
-	void sayStop(int pos, List<LL> route, double bLat, double bLong, double minDistance, float bearing, TextView update, Location currentLocation) {
+	void sayStop(int pos, List<LL> route, double bLat, double bLong, double minDistance, float bearing, TextView update) {
 		
-		String stop = route.get(pos).approach(bLat, bLong, minDistance,bearing,update,currentLocation);
+		String stop = route.get(pos).approach(bLat, bLong, minDistance,bearing);
 		if (stop != "") {
 			speakToMe(stop);
 			update.setText(stop);
 		}
 	}
 
-	void addRoute(String rC, String routeName, String hS, List<LL> route) {
+	private void addRoute(String rC, String routeName, String hS, List<LL> route) {
 		LL list = new LL();
 		populateRoute(list, routeName, rC, hS); // temporary
 		route.add(list);
@@ -198,93 +261,12 @@ public class Main extends Activity implements OnClickListener {
 	void resetApproach(List<LL> route){for(int pos = 0; pos < route.size(); pos++) route.get(pos).resetApproach();}
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		// default settings
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
 
-		// Settings
-		setRequestedOrientation(8);
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		aM = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-		aM.setStreamVolume(AudioManager.STREAM_MUSIC, aM.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-	
-		// LL
-		addRoute("0","DEBUG","DEBUG",route);
-		/*addRoute("10","A","A DOWNTOWN/5TH STREET/ALHAMBRA",route);
-		addRoute("11","A-LTD","A-LTD DOWNTOWN/5TH STREET/CANTRILL",route);
-		addRoute("20","B","B SYCAMORE/DRAKE",route);
-		addRoute("30","C","C SYCAMORE/WAKE FOREST",route);
-		addRoute("40","D","D LAKE BLVD./ARLINGTON",route);
-		addRoute("50","E","E DOWNTOWN/F ST./J ST.",route);
-		addRoute("60","F","F OAK AVE/E. ALVARADO/CATALINA",route);
-		addRoute("70","G","G ANDERSON/ALVERADO/N. SYCAMORE",route);
-		addRoute("100", "J", "J ANDERSON/ALVERADO/N. SYCAMORE", route);
-		addRoute("110","K","K LAKE BLVD./ARTHUR ST.",route);
-		addRoute("120","L","L E. 8TH ST./POLE LINE/MOORE/LOYOLA",route);
-		addRoute("130","M","M B ST./COWELL/DREW",route);
-		addRoute("150", "O", "O SHOPPERS SHUTTLE", route);// DOWNTOWN/TARGET/WEST VILLAGE
-		addRoute("160","P","P DAVIS PERIMETER COUNTER CLOCKWISE",route);
-		addRoute("170","Q","Q DAVIS PERIMETER CLOCKWISE",route);
-		addRoute("190","S","S HOLMES/HARPER JR. HIGH",route);
-		addRoute("200","T","T DAVIS HIGH SCHOOL/MOORE BLVD/ALHAMBRA",route);
-		addRoute("220","V","V WEST VILLAGE",route);
-		addRoute("230", "W", "W COWELL/LILLARD/DRUMMOND", route);
-		addRoute("101","J-EXP","J-EXP TO N.SYCAMORE VIA 113",route);
-		addRoute("020","W-EXP","W-EXP TO COWELL & VALDORA",route);*/
-
-		// UI
-		Button key1 = (Button) findViewById(R.id.button1);
-		Button key2 = (Button) findViewById(R.id.button2);
-		Button key3 = (Button) findViewById(R.id.button3);
-		Button key4 = (Button) findViewById(R.id.button4);
-		Button key5 = (Button) findViewById(R.id.button5);
-		Button key6 = (Button) findViewById(R.id.button6);
-		Button key7 = (Button) findViewById(R.id.button7);
-		Button key8 = (Button) findViewById(R.id.button8);
-		Button key9 = (Button) findViewById(R.id.button9);
-		Button key0 = (Button) findViewById(R.id.button0);
-		Button keyClear = (Button) findViewById(R.id.buttonClear);
-		Button keySet = (Button) findViewById(R.id.buttonSet);
-
-		textTOP = (TextView) findViewById(R.id.displayTOP);
-		textBOT = (TextView) findViewById(R.id.displayBOTTOM);
-
-		key1.setOnClickListener(this);
-		key2.setOnClickListener(this);
-		key3.setOnClickListener(this);
-		key4.setOnClickListener(this);
-		key5.setOnClickListener(this);
-		key6.setOnClickListener(this);
-		key7.setOnClickListener(this);
-		key8.setOnClickListener(this);
-		key9.setOnClickListener(this);
-		key0.setOnClickListener(this);
-
-		keyClear.setOnClickListener(this);
-		keySet.setOnClickListener(this);
-
-		manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-		listener = new LocationListener() {
-			public void onLocationChanged(Location currentLocation) {
-				textTOP.setText(currentLocation.getLatitude() + " " + currentLocation.getLongitude());
-				sayStop(selectRoute(destinationCode, route), route, (double)currentLocation.getLatitude(),(double) currentLocation.getLongitude(),minDistance,currentLocation.getBearing(),textBOT,currentLocation);
-			}
-
-			public void onProviderDisabled(String arg0){}
-			public void onStatusChanged(String provider, int status, Bundle extras){}
-			public void onProviderEnabled(String arg0){}
-		};
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
-
-	public void onClick(View cue) {
+/*	public void onClick(View cue) {
 		if (cue.getId() == R.id.buttonClear) {
 			setDestination = true;
 			manager.removeUpdates(listener);
@@ -345,6 +327,7 @@ public class Main extends Activity implements OnClickListener {
 				if ((destinationCode.length() <=4) && selectRoute(destinationCode, route) > -1) {
 					textTOP.setText(route.get(selectRoute(destinationCode, route)).getHS());	
 					textBOT.setText(route.get(selectRoute(destinationCode, route)).getbusStop());
+
 					manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
 				} else {
 					textTOP.setText("Invalid Pattern");
@@ -354,6 +337,125 @@ public class Main extends Activity implements OnClickListener {
 				break;
 			}
 		}
+	
 	}
+}*/
 
+public void onClick(View cue) {
+
+	String buildCode = "";
+	
+	Button key1 = (Button) findViewById(R.id.button1);
+	Button key2 = (Button) findViewById(R.id.button2);
+	Button key3 = (Button) findViewById(R.id.button3);
+	Button key4 = (Button) findViewById(R.id.button4);
+	Button key5 = (Button) findViewById(R.id.button5);
+	Button key6 = (Button) findViewById(R.id.button6);
+	Button key7 = (Button) findViewById(R.id.button7);
+	Button key8 = (Button) findViewById(R.id.button8);
+	Button key9 = (Button) findViewById(R.id.button9);
+	Button key0 = (Button) findViewById(R.id.button0);
+	
+	Button keySet = (Button) findViewById(R.id.buttonSet);
+	
+	
+	TextView textTOP = (TextView) findViewById(R.id.displayTOP);
+	TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
+	if(cue.getId()==R.id.buttonClear){
+
+		manager.removeUpdates(listener);
+		
+		key1.setOnClickListener(this);
+		key2.setOnClickListener(this);
+		key3.setOnClickListener(this);
+		key4.setOnClickListener(this);
+		key5.setOnClickListener(this);
+		key6.setOnClickListener(this);
+		key7.setOnClickListener(this);
+		key8.setOnClickListener(this);
+		key9.setOnClickListener(this);
+		key0.setOnClickListener(this);
+		
+		keySet.setOnClickListener(this);
+	}
+	
+	switch (cue.getId()) {
+	case R.id.button0:
+		buildCode = textBOT.getText().toString() + "0";
+		textBOT.setText(buildCode);
+		break;
+	case R.id.button1:
+		buildCode = textBOT.getText().toString() + "1";
+		textBOT.setText(buildCode);
+		break;
+	case R.id.button2:
+		buildCode = textBOT.getText().toString() + "2";
+		textBOT.setText(buildCode);
+		break;
+	case R.id.button3:
+		buildCode = textBOT.getText().toString() + "3";
+		textBOT.setText(buildCode);
+		break;
+	case R.id.button4:
+		buildCode = textBOT.getText().toString() + "4";
+		textBOT.setText(buildCode);
+		break;
+	case R.id.button5:
+		buildCode = textBOT.getText().toString() + "5";
+		textBOT.setText(buildCode);
+		break;
+	case R.id.button6:
+		buildCode = textBOT.getText().toString() + "6";
+		textBOT.setText(buildCode);
+		break;
+	case R.id.button7:
+		buildCode = textBOT.getText().toString() + "7";
+		textBOT.setText(buildCode);
+		break;
+	case R.id.button8:
+		buildCode = textBOT.getText().toString() + "8";
+		textBOT.setText(buildCode);
+		break;
+	case R.id.button9:
+		buildCode = textBOT.getText().toString() + "9";
+		textBOT.setText(buildCode);
+		break;
+	case R.id.buttonClear:
+		buildCode = "";
+		textTOP.setText("Destination Number");
+		textBOT.setText("");
+		break;
+	case R.id.buttonSet:
+		
+		if ((textBOT.getText().toString().length() <=4) && selectRoute(textBOT.getText().toString(), route) > -1) {
+			destinationCode = textBOT.getText().toString();
+			
+			textTOP.setText(route.get(selectRoute(textBOT.getText().toString(), route)).getHS());	
+			textBOT.setText(route.get(selectRoute(textBOT.getText().toString(), route)).getbusStop());
+
+			manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
+		} else {
+			textTOP.setText("Invalid Pattern");
+			textBOT.setText("Contact Dispatch");
+		}
+		
+		
+		key1.setOnClickListener(null);
+		key2.setOnClickListener(null);
+		key3.setOnClickListener(null);
+		key4.setOnClickListener(null);
+		key5.setOnClickListener(null);
+		key6.setOnClickListener(null);
+		key7.setOnClickListener(null);
+		key8.setOnClickListener(null);
+		key9.setOnClickListener(null);
+		key0.setOnClickListener(null);
+		
+		keySet.setOnClickListener(null);
+		
+		break;
+		}
+
+	}
 }
+

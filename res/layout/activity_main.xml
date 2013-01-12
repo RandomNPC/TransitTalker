@@ -24,7 +24,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="0"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
 
             <Button
                 android:id="@+id/button1"
@@ -33,7 +33,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="1"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
 
             <Button
                 android:id="@+id/button2"
@@ -42,7 +42,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="2"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
 
             <Button
                 android:id="@+id/button3"
@@ -51,7 +51,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="3"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
 
             <Button
                 android:id="@+id/button4"
@@ -60,7 +60,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="4"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
 
             <Button
                 android:id="@+id/buttonClear"
@@ -69,7 +69,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="CLR"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
         </LinearLayout>
 
         <LinearLayout
@@ -86,7 +86,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="5"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
 
             <Button
                 android:id="@+id/button6"
@@ -95,7 +95,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="6"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
 
             <Button
                 android:id="@+id/button7"
@@ -104,7 +104,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="7"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
 
             <Button
                 android:id="@+id/button8"
@@ -113,7 +113,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="8"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
 
             <Button
                 android:id="@+id/button9"
@@ -122,7 +122,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="9"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
 
             <Button
                 android:id="@+id/buttonSet"
@@ -131,7 +131,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="SET"
-                android:textSize="20pt" />
+                android:textSize="17pt" />
         </LinearLayout>
     </LinearLayout>
 
@@ -143,7 +143,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="23dp"
         android:gravity="center_horizontal"
-        android:text="TOP DISPLAY"
+        android:text="tRaNsIt"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -154,7 +154,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="14dp"
         android:gravity="center_horizontal"
-        android:text="BOTTOM DISPLAY"
+        android:text="TaLkEr"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
