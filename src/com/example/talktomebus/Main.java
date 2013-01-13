@@ -8,7 +8,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -17,18 +16,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class Main extends Activity implements OnClickListener{
+public class Main extends Activity implements OnClickListener, OnLongClickListener{
 
 	LocationListener listener;
 	LocationManager manager;
 	TextToSpeech tts;
 	String destinationCode="";
 	List<LL> route = new ArrayList<LL>();
-	
+	boolean setCode = true;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,10 +41,9 @@ public class Main extends Activity implements OnClickListener{
 		AudioManager aM = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		aM.setStreamVolume(AudioManager.STREAM_MUSIC, aM.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 
-		Button keyClear = (Button) findViewById(R.id.buttonClear);
-		keyClear.setOnClickListener(this);
+		Button keySet = (Button) findViewById(R.id.buttonSet);
+		keySet.setOnClickListener(this);
 		
-		//keyClear.performClick();
 		setupRoutes(route);
 		
 		manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -57,15 +57,19 @@ public class Main extends Activity implements OnClickListener{
 				TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
 				
 				//Not used at this time
-				//TextView textTOP = (TextView) findViewById(R.id.displayTOP);
+				TextView textTOP = (TextView) findViewById(R.id.displayTOP);
+				
+				Log.i("Latitude->", currentLocation.getLatitude()+"");
+				Log.i("Longitude->",currentLocation.getLongitude()+"");
+				
 				
 				sayStop(selectRoute(destinationCode, route),
 						route, 
 						currentLocation.getLatitude(),
 						currentLocation.getLongitude(),
-						10,
+						100,
 						currentLocation.getBearing(),
-						textBOT);
+						textBOT,textTOP);
 			}
 		};
 
@@ -90,12 +94,11 @@ public class Main extends Activity implements OnClickListener{
 		addRoute("170","Q","Q DAVIS PERIMETER CLOCKWISE",route);
 		addRoute("190","S","S HOLMES/HARPER JR. HIGH",route);
 		addRoute("200","T","T DAVIS HIGH SCHOOL/MOORE BLVD/ALHAMBRA",route);
-		addRoute("220","V","V WEST VILLAGE",route);
+		addRoute("220","V","V WEST VILLAGE",route);*/
 		addRoute("230", "W", "W COWELL/LILLARD/DRUMMOND", route);
-		addRoute("101","J-EXP","J-EXP TO N.SYCAMORE VIA 113",route);
-		addRoute("020","W-EXP","W-EXP TO COWELL & VALDORA",route);*/
+		//addRoute("101","J-EXP","J-EXP TO N.SYCAMORE VIA 113",route);
+		//addRoute("020","W-EXP","W-EXP TO COWELL & VALDORA",route);
 	}
-
 
 	private void speakToMe(final String speakStopName) {
 		tts = new TextToSpeech(Main.this, new TextToSpeech.OnInitListener() {
@@ -226,15 +229,18 @@ public class Main extends Activity implements OnClickListener{
 		} else if (routeName == "W-EXP") {
 		} else if(routeName == "DEBUG"){
 			//route.addStop(rC, hS, 38.542008, -121.719196, "debug", "SB");
-			route.addStop(rC, hS, 38.5419763, -121.7911, "Gabe's Room", "EB");
+			route.addStop(rC, hS, 38.5419763, -121.71911, "Gabe's Room", "EB");
+			route.addStop(rC, hS, 38.5422,-121.718304, "Light Pole", "EB");
 		}
 		
 
 	}
 
-	void sayStop(int pos, List<LL> route, double bLat, double bLong, double minDistance, float bearing, TextView update) {
+	void sayStop(int pos, List<LL> route, double bLat, double bLong, double minDistance, float bearing, TextView update, TextView textTOP) {
 		
-		String stop = route.get(pos).approach(bLat, bLong, minDistance,bearing);
+		
+		
+		String stop = route.get(pos).approach(bLat, bLong, minDistance,bearing, textTOP);
 		if (stop != "") {
 			speakToMe(stop);
 			update.setText(stop);
@@ -266,84 +272,7 @@ public class Main extends Activity implements OnClickListener{
         return true;
     }
 
-/*	public void onClick(View cue) {
-		if (cue.getId() == R.id.buttonClear) {
-			setDestination = true;
-			manager.removeUpdates(listener);
-			resetApproach(route);
-		}
-
-		if (setDestination) {
-			switch (cue.getId()) {
-			case R.id.button0:
-				destinationCode += "0";
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.button1:
-				destinationCode += "1";
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.button2:
-				destinationCode += "2";
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.button3:
-				destinationCode += "3";
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.button4:
-				destinationCode += "4";
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.button5:
-				destinationCode += "5";
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.button6:
-				destinationCode += "6";
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.button7:
-				destinationCode += "7";
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.button8:
-				destinationCode += "8";
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.button9:
-				destinationCode += "9";
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.buttonClear:
-				destinationCode = "";
-				textTOP.setText("Destination Number");
-				textBOT.setText(destinationCode);
-				break;
-			case R.id.buttonSet:
-				textTOP.setText("Loading Pattern");
-				textBOT.setText("Please Wait...");
-
-				if ((destinationCode.length() <=4) && selectRoute(destinationCode, route) > -1) {
-					textTOP.setText(route.get(selectRoute(destinationCode, route)).getHS());	
-					textBOT.setText(route.get(selectRoute(destinationCode, route)).getbusStop());
-
-					manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
-				} else {
-					textTOP.setText("Invalid Pattern");
-					textBOT.setText("Contact Dispatch");
-				}
-				setDestination = false;
-				break;
-			}
-		}
-	
-	}
-}*/
-
 public void onClick(View cue) {
-
-	String buildCode = "";
 	
 	Button key1 = (Button) findViewById(R.id.button1);
 	Button key2 = (Button) findViewById(R.id.button2);
@@ -356,106 +285,112 @@ public void onClick(View cue) {
 	Button key9 = (Button) findViewById(R.id.button9);
 	Button key0 = (Button) findViewById(R.id.button0);
 	
-	Button keySet = (Button) findViewById(R.id.buttonSet);
+	Button keyClear = (Button) findViewById(R.id.buttonClear);
 	
 	
 	TextView textTOP = (TextView) findViewById(R.id.displayTOP);
 	TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
-	if(cue.getId()==R.id.buttonClear){
 
-		manager.removeUpdates(listener);
-		
-		key1.setOnClickListener(this);
-		key2.setOnClickListener(this);
-		key3.setOnClickListener(this);
-		key4.setOnClickListener(this);
-		key5.setOnClickListener(this);
-		key6.setOnClickListener(this);
-		key7.setOnClickListener(this);
-		key8.setOnClickListener(this);
-		key9.setOnClickListener(this);
-		key0.setOnClickListener(this);
-		
-		keySet.setOnClickListener(this);
-	}
-	
 	switch (cue.getId()) {
 	case R.id.button0:
-		buildCode = textBOT.getText().toString() + "0";
-		textBOT.setText(buildCode);
+		textBOT.setText(textBOT.getText().toString() + "0");
 		break;
 	case R.id.button1:
-		buildCode = textBOT.getText().toString() + "1";
-		textBOT.setText(buildCode);
+		textBOT.setText(textBOT.getText().toString() + "1");
 		break;
 	case R.id.button2:
-		buildCode = textBOT.getText().toString() + "2";
-		textBOT.setText(buildCode);
+		textBOT.setText(textBOT.getText().toString() + "2");
 		break;
 	case R.id.button3:
-		buildCode = textBOT.getText().toString() + "3";
-		textBOT.setText(buildCode);
+		textBOT.setText(textBOT.getText().toString() + "3");
 		break;
 	case R.id.button4:
-		buildCode = textBOT.getText().toString() + "4";
-		textBOT.setText(buildCode);
+		textBOT.setText(textBOT.getText().toString() + "4");
 		break;
 	case R.id.button5:
-		buildCode = textBOT.getText().toString() + "5";
-		textBOT.setText(buildCode);
+		textBOT.setText(textBOT.getText().toString() + "5");
 		break;
 	case R.id.button6:
-		buildCode = textBOT.getText().toString() + "6";
-		textBOT.setText(buildCode);
+		textBOT.setText(textBOT.getText().toString() + "6");
 		break;
 	case R.id.button7:
-		buildCode = textBOT.getText().toString() + "7";
-		textBOT.setText(buildCode);
+		textBOT.setText(textBOT.getText().toString() + "7");
 		break;
 	case R.id.button8:
-		buildCode = textBOT.getText().toString() + "8";
-		textBOT.setText(buildCode);
+		textBOT.setText(textBOT.getText().toString() + "8");
 		break;
 	case R.id.button9:
-		buildCode = textBOT.getText().toString() + "9";
-		textBOT.setText(buildCode);
+		textBOT.setText(textBOT.getText().toString() + "9");
 		break;
 	case R.id.buttonClear:
-		buildCode = "";
-		textTOP.setText("Destination Number");
-		textBOT.setText("");
+		if(textBOT.getText().toString().length()>0) textBOT.setText(textBOT.getText().toString().substring(0,textBOT.getText().toString().length()-1));
 		break;
 	case R.id.buttonSet:
 		
-		if ((textBOT.getText().toString().length() <=4) && selectRoute(textBOT.getText().toString(), route) > -1) {
-			destinationCode = textBOT.getText().toString();
+		if(setCode){
 			
-			textTOP.setText(route.get(selectRoute(textBOT.getText().toString(), route)).getHS());	
-			textBOT.setText(route.get(selectRoute(textBOT.getText().toString(), route)).getbusStop());
-
-			manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
-		} else {
-			textTOP.setText("Invalid Pattern");
-			textBOT.setText("Contact Dispatch");
+			manager.removeUpdates(listener);
+			
+			key1.setOnClickListener(this);
+			key2.setOnClickListener(this);
+			key3.setOnClickListener(this);
+			key4.setOnClickListener(this);
+			key5.setOnClickListener(this);
+			key6.setOnClickListener(this);
+			key7.setOnClickListener(this);
+			key8.setOnClickListener(this);
+			key9.setOnClickListener(this);
+			key0.setOnClickListener(this);
+			
+			keyClear.setOnClickListener(this);
+			keyClear.setOnLongClickListener(this);
+			resetApproach(route);
+			
+			textTOP.setText("Destination Number");
+			textBOT.setText("");
+			
+			setCode = false;
 		}
+		else{
+			if ((textBOT.getText().toString().length() <=4) && (textBOT.getText().toString().length() > 0) && selectRoute(textBOT.getText().toString(), route) > -1) {
+				destinationCode = textBOT.getText().toString();
+				
+				textTOP.setText(route.get(selectRoute(textBOT.getText().toString(), route)).getHS());	
+				textBOT.setText(route.get(selectRoute(textBOT.getText().toString(), route)).getbusStop());
+
+				manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
+			} else {
+				textTOP.setText("Invalid Pattern");
+				textBOT.setText("Contact Dispatch");
+			}
 		
-		
-		key1.setOnClickListener(null);
-		key2.setOnClickListener(null);
-		key3.setOnClickListener(null);
-		key4.setOnClickListener(null);
-		key5.setOnClickListener(null);
-		key6.setOnClickListener(null);
-		key7.setOnClickListener(null);
-		key8.setOnClickListener(null);
-		key9.setOnClickListener(null);
-		key0.setOnClickListener(null);
-		
-		keySet.setOnClickListener(null);
+			key1.setOnClickListener(null);
+			key2.setOnClickListener(null);
+			key3.setOnClickListener(null);
+			key4.setOnClickListener(null);
+			key5.setOnClickListener(null);
+			key6.setOnClickListener(null);
+			key7.setOnClickListener(null);
+			key8.setOnClickListener(null);
+			key9.setOnClickListener(null);
+			key0.setOnClickListener(null);
+			
+			keyClear.setOnClickListener(null);	
+			
+			setCode = true;
+		}
 		
 		break;
 		}
-
 	}
+
+@Override
+public boolean onLongClick(View arg0) {
+	// TODO Auto-generated method stub
+	TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
+	
+	textBOT.setText("");
+	return false;
+}
 }
 
