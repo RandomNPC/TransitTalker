@@ -7,34 +7,50 @@ import android.widget.TextView;
 public class LL {
 	private Node head;
 	private Node tail;
-
+	private String routeCode;
+	private String headSign;
+	private String routeName;
+	
 	public LL() {
 		head = null;
 		tail = null;
+		routeCode = "";
+		headSign = "";
+		routeName = "";
+	}
+	
+	public String getRC(){return routeCode;}
+	public String getHS(){return headSign;}
+	public String getRN(){return routeName;}
+	public String getbusStop(){
+		if(head.getNext()!=null) return head.getNext().getStop();
+		else return head.getStop();
 	}
 
-	public void addStop(String rC, String hS, double lat, double lon, String sN,String bD) {
-		Node create = new Node(rC, hS, lat, lon, sN, false,null,bD);
+	public void setRouteInfo(String rC,String rN, String hS){
+		routeCode = rC;
+		routeName = rN;
+		headSign = hS;
+	}
+	
+	public void addStop(double lat,double lon, String sN, String dir) {
+		Node create = new Node(lat,lon,sN,dir,false,null);
 		if (head == null)
 			head = create;
 		else {
 			tail.setNext(create);
 		}
 		tail = create;
-
 	}
-	public String getHS(){return head.headSign();}
-	public String getRC(){return head.routeCode();}
-	public String getbusStop(){return head.getStop();}
 	
 	//debug function
 	public void output() {
 		for(Node jux = head; jux != null; jux=jux.getNext()){
-			System.out.println(jux.routeCode() + " " + jux.headSign() + " " +jux.getStop()+" " + jux.stopDirection());
+			Log.i("",jux.getLat() + " " + jux.getLon() + " " +jux.getStop()+" " + jux.getDir());
 		}
 	}
 	
-	boolean inDirection(double bearing, String busdirection){
+	private boolean inDirection(double bearing, String busdirection){
 		
 		if(busdirection.equals("NB")){
 			if((bearing >=270 && bearing <= 360) || (bearing >=0 && bearing <= 90)) return true;
@@ -55,7 +71,7 @@ public class LL {
 		else return false;	
 	}
 	
-	double bustoStop(double stopLat,double stopLong,double busLat,double busLong){
+	private double bustoStop(double stopLat,double stopLong,double busLat,double busLong){
 		
 		Location bus = new Location("busLocation");
 		bus.setLatitude(busLat);
@@ -63,28 +79,19 @@ public class LL {
 		Location stop = new Location("busStop");
 		stop.setLatitude(stopLat);
 		stop.setLongitude(stopLong);
-		
 		double finalResult = bus.distanceTo(stop);
-		
-		bus = null;
-		stop = null;
-		
+		bus = stop = null;	
 		return finalResult;
-		
-		//return Math.sqrt(Math.pow((stopLat-busLat), 2)+Math.pow((stopLong-busLong), 2));
+	
 	}
 	
-	public String approach(double bLat, double bLong, double minDistance, float bearing, TextView textTOP){
+	public String approach(double bLat, double bLong, double minDistance, double bearing){
 		
 		for(Node checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){
-			Log.i("bustoStop()->",""+bustoStop(bLat,bLong,checkStop.getLatitude(),checkStop.getLongitude()));
 
-			textTOP.setText(bLat + " " + bLong + " " + bustoStop(bLat,bLong,checkStop.getLatitude(),checkStop.getLongitude()) );
-
-			
-			if(bustoStop(bLat,bLong,checkStop.getLatitude(),checkStop.getLongitude())<minDistance && inDirection(bearing,checkStop.stopDirection()) && !checkStop.silence()){
+			if(bustoStop(bLat,bLong,checkStop.getLat(),checkStop.getLon())< minDistance && inDirection(bearing,checkStop.getDir()) && !checkStop.getPass()){
 				checkStop.setPass(true);
-				return checkStop.getStop();
+				return checkStop.getnextStop();
 			}
 		}
 		
@@ -100,4 +107,5 @@ public class LL {
 	
 	
 }
+
 

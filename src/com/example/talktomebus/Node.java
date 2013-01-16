@@ -1,74 +1,44 @@
 package com.example.talktomebus;
 
-public class Node {
-	private String routeCode;
-	private String headSign;
+public class Node{
+	
 	private double latitude;
 	private double longitude;
 	private String stopName;
-	private boolean silence;
+	private String direction;
+	private boolean pass;
 	private Node next;
-	private String stopDirection;
-
-	public Node() {
-		routeCode = "";
-		headSign = "";
+	
+	Node(){
 		latitude = 0;
 		longitude = 0;
 		stopName = "";
-		silence = false;
+		direction = "";
+		pass = false;
 		next = null;
-		stopDirection="";
 	}
-
-	public Node(String rC, String hS, double lat, double lon, String sN,boolean sil, Node nx,String bDir) {
-		routeCode = rC;
-		headSign = hS;
+	
+	Node(double lat,double lon, String sN, String dir, boolean pS, Node n){
 		latitude = lat;
 		longitude = lon;
 		stopName = sN;
-		silence = sil;
-		next = nx;
-		stopDirection=bDir;
-	}
-
-	public String stopDirection(){
-		return stopDirection;
-	}
-	
-	public String headSign() {
-		return headSign;
-	}
-
-	public String routeCode() {
-		return routeCode;
-	}
-
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public String getStop() {
-		return stopName;
-	}
-
-	public boolean silence() {
-		return silence;
-	}
-
-	public void setPass(boolean passedStop) {
-		silence = passedStop;
-	}
-
-	public Node getNext() {
-		return next;
-	}
-
-	public void setNext(Node n) {
+		direction = dir;
+		pass = pS;
 		next = n;
 	}
+	
+	double getLat(){return latitude;}
+	double getLon(){return longitude;}
+	String getStop(){return stopName;}
+	String getDir(){return direction;}
+	String getnextStop(){
+		if(getNext()!=null) return next.getStop();
+		else return getStop();}
+	boolean getPass(){return pass;}
+	void setPass(boolean pS){pass = pS;}
+	Node getNext(){return next;}
+	void setNext(Node n){next = n;}
+	
+	
+	
 }
