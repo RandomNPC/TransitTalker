@@ -169,7 +169,7 @@ public class Main extends Activity implements OnClickListener, OnLongClickListen
 			route.addStop(38.54402, -121.7598299, "La Rue Rd & Orchard", "NB");
 			route.addStop(38.5469099, -121.75857, "Anderson Rd & Russell Blvd", "NB");
 			route.addStop(38.5505799, -121.76471, "8th St & Sycamore Ln", "WB");
-			route.addStop(38.5486899, -121.76658, "Wake Forest Dr & 1440 (EB)", "EB");
+			route.addStop(38.5486899, -121.76658, "Wake Forest Dr & 1440", "EB");
 			route.addStop(38.54793, -121.7639399, "Wake Forest Dr & Oxford Cir", "EB");
 			route.addStop(38.5473799, -121.76198, "Sycamore Ln & Wake Forest Dr", "SB");
 			route.addStop(38.54251, -121.7608899, "La Rue Rd & Orchard", "SB");
@@ -702,6 +702,11 @@ public class Main extends Activity implements OnClickListener, OnLongClickListen
 		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
 		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
 	
+		if(textBOT.getText().toString().length()>12){
+			Button keySet = (Button) findViewById(R.id.buttonSet);
+			keySet.performClick();
+		}
+		
 		switch (cue.getId()) {
 		case R.id.button0:
 			textBOT.setText(textBOT.getText().toString() + "0");
@@ -774,15 +779,8 @@ public class Main extends Activity implements OnClickListener, OnLongClickListen
 					textTOP.setText("Invalid Pattern");
 					textBOT.setText("Contact Dispatch");
 				}
-			
-<<<<<<< HEAD
-			keyClear.setOnClickListener(null);	
-			keyClear.setOnLongClickListener(null);
-			setCode = true;
-		}
+			}
 		
-		break;
-=======
 				key1.setOnClickListener(null);
 				key2.setOnClickListener(null);
 				key3.setOnClickListener(null);
@@ -797,13 +795,9 @@ public class Main extends Activity implements OnClickListener, OnLongClickListen
 				keyClear.setOnClickListener(null);	
 				keyClear.setOnLongClickListener(null);
 				setCode = true;
-			}
-			
-			break;
-			}
->>>>>>> Data Structure Updated!
 		}
-	
+	}
+			
 	@Override
 	public boolean onLongClick(View arg0) {
 		// TODO Auto-generated method stub
