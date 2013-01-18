@@ -2,7 +2,6 @@ package com.example.talktomebus;
 
 import android.location.Location;
 import android.util.Log;
-import android.widget.TextView;
 
 public class LL {
 	private Node head;

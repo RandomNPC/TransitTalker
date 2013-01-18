@@ -24,7 +24,7 @@
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="0"
+                android:text="@string/zero"
                 android:textSize="17pt" />
 
             <Button
@@ -33,7 +33,7 @@
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="1"
+                android:text="@string/one"
                 android:textSize="17pt" />
 
             <Button
@@ -42,7 +42,7 @@
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="2"
+                android:text="@string/two"
                 android:textSize="17pt" />
 
             <Button
@@ -51,7 +51,7 @@
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="3"
+                android:text="@string/three"
                 android:textSize="17pt" />
 
             <Button
@@ -60,7 +60,7 @@
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="4"
+                android:text="@string/four"
                 android:textSize="17pt" />
 
             <Button
@@ -69,7 +69,7 @@
                 android:layout_height="75dp"
                 android:layout_weight=".66"
                 android:gravity="center"
-                android:text="BKSP"
+                android:text="@string/BKSP"
                 android:textSize="17pt" />
         </LinearLayout>
 
@@ -86,7 +86,7 @@
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="5"
+                android:text="@string/five"
                 android:textSize="17pt" />
 
             <Button
@@ -95,7 +95,7 @@
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="6"
+                android:text="@string/six"
                 android:textSize="17pt" />
 
             <Button
@@ -104,7 +104,7 @@
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="7"
+                android:text="@string/seven"
                 android:textSize="17pt" />
 
             <Button
@@ -113,7 +113,7 @@
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="8"
+                android:text="@string/eight"
                 android:textSize="17pt" />
 
             <Button
@@ -122,7 +122,7 @@
                 android:layout_height="75dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="9"
+                android:text="@string/nine"
                 android:textSize="17pt" />
 
             <Button
@@ -131,7 +131,7 @@
                 android:layout_height="75dp"
                 android:layout_weight=".66"
                 android:gravity="center"
-                android:text="SET"
+                android:text="@string/SET"
                 android:textSize="17pt" />
         </LinearLayout>
     </LinearLayout>
@@ -144,7 +144,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="23dp"
         android:gravity="center_horizontal"
-        android:text="tRaNsIt"
+        android:text="@string/tRaNsIt"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -155,7 +155,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="14dp"
         android:gravity="center_horizontal"
-        android:text="TaLkEr"
+        android:text="@string/TaLkEr"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
