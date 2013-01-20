@@ -2,6 +2,7 @@ package com.example.talktomebus;
 
 import android.location.Location;
 import android.util.Log;
+import android.widget.TextView;
 
 public class LL {
 	private Node head;
@@ -84,13 +85,14 @@ public class LL {
 	
 	}
 	
-	public String approach(double bLat, double bLong, double minDistance, double bearing){
+	public String approach(double bLat, double bLong, double minDistance, double bearing,TextView stop){
 		
 		for(Node checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){
 
 			if(bustoStop(bLat,bLong,checkStop.getLat(),checkStop.getLon())< minDistance && inDirection(bearing,checkStop.getDir()) && !checkStop.getPass()){
 				checkStop.setPass(true);
-				return checkStop.getnextStop();
+				stop.setText(checkStop.getnextStop());
+				return checkStop.getStop();
 			}
 		}
 		

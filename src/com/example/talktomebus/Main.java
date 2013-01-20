@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -454,7 +455,7 @@ public class Main extends Activity implements OnClickListener, OnLongClickListen
 			route.addStop(38.5437499, -121.74982, "Memorial Union Terminal Arrival & Howard Way", "NB");
 			route.addStop(38.5607399, -121.7380799, "Covell Blvd & J St", "WB");
 		} else if (routeName == "Q") {
-			route.addStop(38.5439599, -121.74968, "Memorial Union & Howard Way (NB)", "NB");
+			route.addStop(38.5439599, -121.74968, "Memorial Union & Howard Way", "NB");
 			route.addStop(38.5464899, -121.7635, "Russell Blvd & Sycamore Ln", "WB");
 			route.addStop(38.5465499, -121.7710199, "Russell Blvd & Arthur St", "WB");
 			route.addStop(38.54888, -121.77851, "Arlington Blvd & Bucklebury Rd", "NB");
@@ -665,10 +666,10 @@ public class Main extends Activity implements OnClickListener, OnLongClickListen
 		});
 	}
 	void sayStop(int pos, List<LL> route, double bLat, double bLong, double minDistance, float bearing, TextView update) {
-		String stop = route.get(pos).approach(bLat, bLong, minDistance,bearing);
+		String stop = route.get(pos).approach(bLat, bLong, minDistance,bearing,update);
 		if (stop != "") {
 			speakToMe(stop);
-			update.setText(stop);
+			//update.setText(stop);
 		}
 	}
 	int selectRoute(String rC, List<LL> route) {
@@ -685,6 +686,8 @@ public class Main extends Activity implements OnClickListener, OnLongClickListen
 
 	public void onClick(View cue) {
 		
+		boolean addInput = true;
+		
 		Button key1 = (Button) findViewById(R.id.button1);
 		Button key2 = (Button) findViewById(R.id.button2);
 		Button key3 = (Button) findViewById(R.id.button3);
@@ -698,45 +701,41 @@ public class Main extends Activity implements OnClickListener, OnLongClickListen
 		
 		Button keyClear = (Button) findViewById(R.id.buttonClear);
 		
-		
 		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
 		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
 	
-		if(textBOT.getText().toString().length()>12){
-			Button keySet = (Button) findViewById(R.id.buttonSet);
-			keySet.performClick();
-		}
+		if(textBOT.getText().toString().length()>12){addInput = false;}
 		
 		switch (cue.getId()) {
 		case R.id.button0:
-			textBOT.setText(textBOT.getText().toString() + "0");
+			if(addInput)textBOT.setText(textBOT.getText().toString() + "0");
 			break;
 		case R.id.button1:
-			textBOT.setText(textBOT.getText().toString() + "1");
+			if(addInput)textBOT.setText(textBOT.getText().toString() + "1");
 			break;
 		case R.id.button2:
-			textBOT.setText(textBOT.getText().toString() + "2");
+			if(addInput)textBOT.setText(textBOT.getText().toString() + "2");
 			break;
 		case R.id.button3:
-			textBOT.setText(textBOT.getText().toString() + "3");
+			if(addInput)textBOT.setText(textBOT.getText().toString() + "3");
 			break;
 		case R.id.button4:
-			textBOT.setText(textBOT.getText().toString() + "4");
+			if(addInput)textBOT.setText(textBOT.getText().toString() + "4");
 			break;
 		case R.id.button5:
-			textBOT.setText(textBOT.getText().toString() + "5");
+			if(addInput)textBOT.setText(textBOT.getText().toString() + "5");
 			break;
 		case R.id.button6:
-			textBOT.setText(textBOT.getText().toString() + "6");
+			if(addInput)textBOT.setText(textBOT.getText().toString() + "6");
 			break;
 		case R.id.button7:
-			textBOT.setText(textBOT.getText().toString() + "7");
+			if(addInput)textBOT.setText(textBOT.getText().toString() + "7");
 			break;
 		case R.id.button8:
-			textBOT.setText(textBOT.getText().toString() + "8");
+			if(addInput)textBOT.setText(textBOT.getText().toString() + "8");
 			break;
 		case R.id.button9:
-			textBOT.setText(textBOT.getText().toString() + "9");
+			if(addInput)textBOT.setText(textBOT.getText().toString() + "9");
 			break;
 		case R.id.buttonClear:
 			if(textBOT.getText().toString().length()>0) textBOT.setText(textBOT.getText().toString().substring(0,textBOT.getText().toString().length()-1));
@@ -774,12 +773,12 @@ public class Main extends Activity implements OnClickListener, OnLongClickListen
 					textTOP.setText(route.get(selectRoute(textBOT.getText().toString(), route)).getHS());	
 					textBOT.setText(route.get(selectRoute(textBOT.getText().toString(), route)).getbusStop());
 	
-					manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
+					manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1200, 0, listener);
 				} else {
 					textTOP.setText("Invalid Pattern");
 					textBOT.setText("Contact Dispatch");
 				}
-			}
+		 
 		
 				key1.setOnClickListener(null);
 				key2.setOnClickListener(null);
@@ -795,6 +794,8 @@ public class Main extends Activity implements OnClickListener, OnLongClickListen
 				keyClear.setOnClickListener(null);	
 				keyClear.setOnLongClickListener(null);
 				setCode = true;
+			}
+			break;
 		}
 	}
 			
