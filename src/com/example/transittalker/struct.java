@@ -4,14 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import android.location.Location;
-import android.util.Log;
 
-
-//import android.location.Location;
-
-
-@SuppressWarnings("unused")
-public class struct {
+public class struct{
 	private double minDistance;
 	private double busLat;
 	private double busLon;
@@ -24,9 +18,11 @@ public class struct {
 	private String routeName;
 	private String atStop;
 	private String nextStop;
+	private String prCode;
 	private List<path> pathWay;
+
 	
-	struct(double min){
+	public struct(double min){
 		minDistance = min;
 		busLat = 0;
 		busLon = 0;
@@ -39,11 +35,11 @@ public class struct {
 		routeName = "";
 		atStop = "";
 		nextStop = "";
+		prCode = "";
 		pathWay = new LinkedList<path>();
 	}
 	//universal functions
 	private boolean distanceTo(double lat, double lon){
-		
 		Location bus = new Location("busLocation");
 		bus.setLatitude(busLat);
 		bus.setLongitude(busLon);
@@ -56,24 +52,11 @@ public class struct {
 		else return false;
 	}
 	private boolean inDirection(double bearing, String busdirection){
-		
-		if(busdirection.equals("NB")){
-			if((bearing >=270 && bearing <= 360) || (bearing >=0 && bearing <= 90)) return true;
-			else return false;
-		}
-		else if(busdirection.equals("SB")){
-			if(bearing >=90 && bearing <= 270) return true;
-			else return false;
-		}
-		else if(busdirection.equals("EB")){
-			if(bearing >=0 && bearing <= 180) return true;
-			else return false;
-		}
-		else if(busdirection.equals("WB")){
-			if(bearing >=180 && bearing <= 360) return true;
-			else return false;
-		}
-		else return false;	
+		if(busdirection.equals("NB")){if((bearing >=270 && bearing <= 360) || (bearing >=0 && bearing <= 90)) return true;}
+		else if(busdirection.equals("SB")){if(bearing >=90 && bearing <= 270) return true;}
+		else if(busdirection.equals("EB")){if(bearing >=0 && bearing <= 180) return true;}
+		else if(busdirection.equals("WB")){if(bearing >=180 && bearing <= 360) return true;}
+		return false;	
 	}
 		
 	//Bus Location
@@ -84,28 +67,28 @@ public class struct {
 	}
 
 	//Route info members
-	public void setRouteInfo(String rC,String rN, String hS){
+	public void setRouteInfo(String rC,String rN, String hS, String pR){
 		routeCode = rC;
 		routeName = rN;
 		headSign = hS;
+		prCode = pR;
 	}	
+
 	
-	String routeCode(){return routeCode;}
-	String routeName(){return routeName;}
-	String headSign(){return headSign;}
+	public String routeCode(){return routeCode;}
+	public String routeName(){return routeName;}
+	public String headSign(){return headSign;}
+	public String prCode(){return prCode;}
 	
 	//Pathway members
-	void addTopath(double lat, double lon){
-		pathWay.add(new path(lat,lon));
-	}
-
+	public void addTopath(double lat, double lon){pathWay.add(new path(lat,lon));}
 	boolean onTrack(){
 		for(path p: pathWay){
 			if(distanceTo(p.pathLat(),p.pathLon()))	return true;
 		}
 		return false;
 	}
-
+	
 	//Linked List members
 	public void addStop(double lat,double lon, String sN, String dir) {
 		busStop create = new busStop(lat,lon,sN,dir,false,null);
@@ -133,7 +116,7 @@ public class struct {
 	} 
 
 	public boolean stopOffPath(){
-	
+		if(pos==null) pos = head;
 		for(busStop l = pos; l!=null; l=l.getNext()){
 			if(!l.isSilenced() && distanceTo(l.getLat(),l.getLon()) && inDirection(busBearing,l.getDir())){
 				l.setSilence(true);
@@ -148,14 +131,11 @@ public class struct {
 		return false;
 	}
 	
-	String nextStop(){return nextStop;}
-	String currentStop(){return atStop;}
+	public String nextStop(){return nextStop;}
+	public String currentStop(){return atStop;}
 	
-	public void resetApproach(){
-		busStop checkStop = head;	
-		if(head!=null){		
-			for(checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){checkStop.setSilence(false);}
-		}
+	public void resetApproach(){	
+		for(busStop checkStop = head; checkStop!=null; checkStop=checkStop.getNext()){checkStop.setSilence(false);}
 		pos = head;
 	}
 	

@@ -164,6 +164,22 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/displayBOTTOM"
         android:layout_alignParentRight="true"
-        android:src="@drawable/searching" />
+        android:src="@drawable/searching"/>
+
+    <ImageView
+        android:id="@+id/fence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/search"
+        android:layout_below="@+id/search"
+        android:src="@drawable/geofence" />
+
+    <ImageView
+        android:id="@+id/pr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/displayBOTTOM"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/prcode" />
 
 </RelativeLayout>
