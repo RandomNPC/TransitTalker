@@ -164,6 +164,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/displayBOTTOM"
         android:layout_alignParentRight="true"
+        android:contentDescription="@string/image"
         android:src="@drawable/searching"/>
 
     <ImageView
@@ -172,6 +173,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/search"
         android:layout_below="@+id/search"
+        android:contentDescription="@string/image"
         android:src="@drawable/geofence" />
 
     <ImageView
@@ -180,6 +182,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/displayBOTTOM"
         android:layout_alignParentLeft="true"
+        android:contentDescription="@string/image"
         android:src="@drawable/prcode" />
 
 </RelativeLayout>

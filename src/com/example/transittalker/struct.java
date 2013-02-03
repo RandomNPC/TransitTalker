@@ -19,6 +19,7 @@ public class struct{
 	private String atStop;
 	private String nextStop;
 	private String prCode;
+	private String terminal;
 	private List<path> pathWay;
 
 	
@@ -36,6 +37,7 @@ public class struct{
 		atStop = "";
 		nextStop = "";
 		prCode = "";
+		terminal = "";
 		pathWay = new LinkedList<path>();
 	}
 	//universal functions
@@ -67,14 +69,16 @@ public class struct{
 	}
 
 	//Route info members
-	public void setRouteInfo(String rC,String rN, String hS, String pR){
+	public void setRouteInfo(String rC,String rN, String hS, String pR, String T){
 		routeCode = rC;
 		routeName = rN;
 		headSign = hS;
 		prCode = pR;
+		terminal = T;
 	}	
 
-	
+	public String headStop(){return head.getStopName();}
+	public String terminal(){return terminal;}
 	public String routeCode(){return routeCode;}
 	public String routeName(){return routeName;}
 	public String headSign(){return headSign;}

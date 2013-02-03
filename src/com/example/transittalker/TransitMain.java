@@ -29,7 +29,7 @@ public class TransitMain {
 	
 	//universal function
 	private boolean isEqual(String marco, String polo){
-		if(marco.length() <= 4 && polo.length() <=4){
+		if(marco.length() > 0 && polo.length() > 0){
 			return (Integer.parseInt(marco) == Integer.parseInt(polo))? true:false;
 		}
 		else return false;
@@ -47,8 +47,9 @@ public class TransitMain {
 	public void selectRoute(String rC){
 		routeFocus = null;
 		for(struct l: route){ 
-			if((rC != "" && isEqual(rC,l.routeCode()))){
+			if(isEqual(rC,l.routeCode())){
 				routeFocus = l;
+				break;
 			}
 		}
 	}
@@ -58,7 +59,7 @@ public class TransitMain {
 		
 		routeFocus = null;
 		for(struct l: route){ 
-			if((rC != "" && isEqual(rC,l.routeCode())) && ((pR!="" && l.prCode()!="") && isEqual(pR,l.prCode()))){
+			if(isEqual(rC,l.routeCode()) && isEqual(pR,l.prCode())){
 				routeFocus = l;
 			}
 		}
@@ -67,6 +68,8 @@ public class TransitMain {
 	//return selections
 	public prCode prFocus(){return prFocus;}
 	public struct routeFocus(){return routeFocus;}
+	
+	public String terminal(){return routeFocus.terminal();}
 	public String routeCode(){return routeFocus.routeCode();}
 	public String routeName(){return routeFocus.routeName();}
 	public String headSign(){return routeFocus.headSign();}
@@ -78,49 +81,49 @@ public class TransitMain {
 	public boolean onTrack(){return routeFocus.onTrack();}
 	public void resetApproach(){routeFocus.resetApproach();}
 	public void setBusPos(double lat, double lon, double bear){routeFocus.setBusPos(lat, lon, bear);}
-	public void setRouteInfo(String rC,String rN, String hS, String pR){routeFocus.setRouteInfo(rC, rN, hS, pR);}
+	public void setRouteInfo(String rC,String rN, String hS, String pR, String T){routeFocus.setRouteInfo(rC, rN, hS, pR, T);}
 	
 	//upload route info
 	public void setupRoutes(){
-		addRoute("1","","NOT IN SERVICE","");
-		addRoute("10","A","DOWNTOWN/5TH STREET/ALHAMBRA","");
-		addRoute("10","A","DOWNTOWN/5TH STREET/ALHAMBRA","31");
-		addRoute("11","A-LTD","DOWNTOWN/5TH STREET/CANTRILL","");
-		addRoute("20","B","SYCAMORE/DRAKE","");
-		addRoute("30","C","SYCAMORE/WAKE FOREST","");
-		addRoute("30","C","SYCAMORE/WAKE FOREST","32");
-		addRoute("40","D","LAKE BLVD./ARLINGTON","");
-		addRoute("40","D","LAKE BLVD./ARLINGTON","43");
-		addRoute("50","E","DOWNTOWN/F ST./J ST.","");
-		addRoute("50","E","DOWNTOWN/F ST./J ST.","34");
-		addRoute("60","F","OAK AVE/E. ALVARADO/CATALINA","");
-		addRoute("60","F","OAK AVE/E. ALVARADO/CATALINA","35");
-		addRoute("70","G","ANDERSON/ALVERADO/N. SYCAMORE","");
-		addRoute("70","G","ANDERSON/ALVERADO/N. SYCAMORE","36");
-		addRoute("100", "J", "ANDERSON/ALVERADO/N. SYCAMORE", "");
-		addRoute("100", "J", "ANDERSON/ALVERADO/N. SYCAMORE", "36");
-		addRoute("110","K","LAKE BLVD/ARTHUR ST.","");
-		addRoute("110","K","LAKE BLVD/ARTHUR ST.","43");
-		addRoute("120","L","E. 8TH ST./POLE LINE/MOORE/LOYOLA","");
-		addRoute("120","L","E. 8TH ST./POLE LINE/MOORE/LOYOLA","39");
-		addRoute("130","M","B ST./COWELL/DREW","");
-		addRoute("130","M","B ST./COWELL/DREW","37");
-		addRoute("150", "O", "SHOPPERS SHUTTLE/DOWTOWN/TARGET/WEST VILLAGE", "");
-		addRoute("160","P","DAVIS PERIMETER COUNTER CLOCKWISE","");
-		addRoute("160","P","DAVIS PERIMETER COUNTER CLOCKWISE","38");
-		addRoute("170","Q","DAVIS PERIMETER CLOCKWISE","");
-		addRoute("170","Q","DAVIS PERIMETER CLOCKWISE","34");
-		addRoute("190","S","HOLMES/HARPER JR. HIGH","");
-		addRoute("200","T","DAVIS HIGH SCHOOL/MOORE BLVD/ALHAMBRA","");
-		addRoute("220","V","WEST VILLAGE/HEALTH SCIENCES","");
-		addRoute("230", "W", "COWELL/LILLARD/DRUMMOND", "");
-		addRoute("230", "W", "COWELL/LILLARD/DRUMMOND", "37");
-		addRoute("101","J-EXP","TO N.SYCAMORE VIA 113","");
-		addRoute("020","W-EXP","TO COWELL & VALDORA","");
+		addRoute("1","","NOT IN SERVICE","","");
+		addRoute("10","A","DOWNTOWN/5TH STREET/ALHAMBRA","","U C Davis Silo");
+		addRoute("10","A","DOWNTOWN/5TH STREET/ALHAMBRA","31","El Cemonte and Glide");
+		addRoute("11","A-LTD","DOWNTOWN/5TH STREET/CANTRILL","","U C Davis Silo");
+		addRoute("20","B","SYCAMORE/DRAKE DRIVE","","U C Davis Memorial Union");
+		addRoute("30","C","SYCAMORE/WAKE FOREST","","U C Davis Silo");
+		addRoute("30","C","SYCAMORE/WAKE FOREST","32","Sycamore and Russell");
+		addRoute("40","D","LAKE BLVD/ARLINGTON","","U C Davis Silo");
+		addRoute("40","D","LAKE BLVD/ARLINGTON","43","U C Davis Silo");
+		addRoute("50","E","DOWNTOWN/F ST/J ST","","U C Davis Memorial Union");
+		addRoute("50","E","DOWNTOWN/F ST/J ST","34","F Street and Covell");
+		addRoute("60","F","OAK AVE/EAST ALVARADO/CATALINA","","U C Davis Memorial Union");
+		addRoute("60","F","OAK AVE/EAST ALVARADO/CATALINA","35","Anderson and Alvarado");
+		addRoute("70","G","ANDERSON/ALVERADO/NORTH SYCAMORE","","U C Davis Memorial Union");
+		addRoute("70","G","ANDERSON/ALVERADO/NORTH SYCAMORE","36","North Sycamore Loop");
+		addRoute("100", "J", "ANDERSON/ALVERADO/NORTH SYCAMORE", "","U C Davis Silo");
+		addRoute("100", "J", "ANDERSON/ALVERADO/NORTH SYCAMORE", "36","North Sycamore Loop");
+		addRoute("110","K","LAKE BLVD/ARTHUR STREET","","U C Davis Memorial Union");
+		addRoute("110","K","LAKE BLVD/ARTHUR STREET","43","U C Davis Memorial Union");
+		addRoute("120","L","EAST 8TH STREET/POLE LINE/MOORE/LOYOLA","","U C Davis Silo");
+		addRoute("120","L","EAST 8TH STREET/POLE LINE/MOORE/LOYOLA","39","Loyola and Pole Line");
+		addRoute("130","M","B STREET/COWELL/DREW","","U C Davis Memorial Union");
+		addRoute("130","M","B STREET/COWELL/DREW","37","Cowell and Valdora");
+		addRoute("150", "O", "SHOPPERS SHUTTLE/DOWTOWN/TARGET/WEST VILLAGE", "","U C Davis Silo");
+		addRoute("160","P","DAVIS PERIMETER COUNTER CLOCKWISE","","U C Davis Memorial Union");
+		addRoute("160","P","DAVIS PERIMETER COUNTER CLOCKWISE","38","J and Covell");
+		addRoute("170","Q","DAVIS PERIMETER CLOCKWISE","","U C Davis Memorial Union");
+		addRoute("170","Q","DAVIS PERIMETER CLOCKWISE","34","F and Covell");
+		addRoute("190","S","HOLMES/HARPER JR. HIGH","","");
+		addRoute("200","T","DAVIS HIGH SCHOOL/MOORE BLVD/ALHAMBRA","","");
+		addRoute("220","V","WEST VILLAGE/HEALTH SCIENCES","","U C Davis Silo");
+		addRoute("230", "W", "COWELL/LILLARD/DRUMMOND", "","U C Davis Silo");
+		addRoute("230", "W", "COWELL/LILLARD/DRUMMOND", "37","Cowell and Valdora");
+		addRoute("101","J-EXP","TO NORTH SYCAMORE VIA 113","","");
+		addRoute("020","W-EXP","TO COWELL & VALDORA","","");
 	}
-	private void addRoute(String rC,String routeName,String hS,String pR){
+	private void addRoute(String rC,String routeName,String hS,String pR,String terminal){
 		struct list = new struct(minDistance);
-		list.setRouteInfo(rC, routeName, hS, pR);
+		list.setRouteInfo(rC, routeName, hS, pR, terminal);
 		populateRoute(list,routeName,pR);
 		createGeofence(list,routeName);
 		route.add(list);
@@ -4178,8 +4181,9 @@ public class TransitMain {
 	}
 	private void addPR(String iD, String prMsg){pRCode.add(new prCode(iD,prMsg));}
 	public void selectPR(String pR){
+		prFocus = null;
 		for(prCode p : pRCode){
-			if(pR!=""&&isEqual(p.iD(), pR)){
+			if(isEqual(p.iD(), pR)){
 				prFocus = p;
 			}
 		}

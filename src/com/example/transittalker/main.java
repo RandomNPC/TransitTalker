@@ -33,7 +33,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 			public void onInit(int status) {
 				if (status != TextToSpeech.ERROR) {
 					tts.setLanguage(Locale.US);
-					tts.speak("Approaching " + speakStopName, TextToSpeech.QUEUE_ADD, null);
+					tts.speak(speakStopName, TextToSpeech.QUEUE_ADD, null);
 				}
 			}
 		});
@@ -54,15 +54,37 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
         setContentView(R.layout.main);
 
         //Settings
-		setRequestedOrientation(8);
+		setRequestedOrientation(0);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		AudioManager aM = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		aM.setStreamVolume(AudioManager.STREAM_MUSIC, aM.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 
+		Button key1 = (Button) findViewById(R.id.button1);
+		Button key2 = (Button) findViewById(R.id.button2);
+		Button key3 = (Button) findViewById(R.id.button3);
+		Button key4 = (Button) findViewById(R.id.button4);
+		Button key5 = (Button) findViewById(R.id.button5);
+		Button key6 = (Button) findViewById(R.id.button6);
+		Button key7 = (Button) findViewById(R.id.button7);
+		Button key8 = (Button) findViewById(R.id.button8);
+		Button key9 = (Button) findViewById(R.id.button9);
+		Button key0 = (Button) findViewById(R.id.button0);
 		Button keyClear = (Button) findViewById(R.id.buttonClear);
 		Button keySet = (Button) findViewById(R.id.buttonSet);
+		
+		key1.setOnClickListener(this);
+		key2.setOnClickListener(this);
+		key3.setOnClickListener(this);
+		key4.setOnClickListener(this);
+		key5.setOnClickListener(this);
+		key6.setOnClickListener(this);
+		key7.setOnClickListener(this);
+		key8.setOnClickListener(this);
+		key9.setOnClickListener(this);
+		key0.setOnClickListener(this);
 		keySet.setOnClickListener(this);
 		keyClear.setOnClickListener(this);
+		keyClear.setOnLongClickListener(this);
 		
 		changeVisibility(R.id.search,View.INVISIBLE);
 		changeVisibility(R.id.fence, View.INVISIBLE);
@@ -90,7 +112,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				if(transit.onTrack() && transit.isApeshit()){
 					//on the fixed route path
 					if(transit.atStop()){
-						speakToMe(transit.currentStop());
+						speakToMe("Approaching "+ transit.currentStop());
 						textBOT.setText(transit.nextStop());
 					}
 					else textBOT.setText(transit.currentStop());
@@ -99,7 +121,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 					//bus has gone off the fixed route path (apeshit)
 					
 					if(transit.stopOffPath()){
-						speakToMe(transit.currentStop());
+						speakToMe("Approaching " + transit.currentStop());
 						textBOT.setText(transit.nextStop());
 						transit.setApeshit(true);
 					}
@@ -109,6 +131,8 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 			}
 		};
 
+		transit.selectRoute("0","0");
+		setRoute();
     }
 
 	@Override
@@ -117,15 +141,15 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
         return true;
     }
 	
-	private void setRoute(){
+	public void setRoute(){
 		
 		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
 		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
 		
 		//route = null && pr = null
 		if(transit.routeFocus() == null && transit.prFocus() == null){
-			textTOP.setText("Invalid Pattern");
-			textBOT.setText("Contact Dispatch");
+			textTOP.setText("No P/R Code set");
+			textBOT.setText("No route pattern set");
 			changeVisibility(R.id.pr, View.INVISIBLE);
 		}
 		
@@ -135,7 +159,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				textTOP.setText("P/R Code Set: " + transit.prFocus().prMsg());
 				textBOT.setText("No route pattern set");
 
-			changeVisibility(R.id.pr, View.VISIBLE);
+				if(!transit.prFocus().iD().equals("0")) changeVisibility(R.id.pr, View.VISIBLE);
 			
 		}
 		
@@ -143,7 +167,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		else if(transit.routeFocus() != null && transit.prFocus() == null){
 			
 			textTOP.setText(transit.routeName() + " " + transit.headSign());
-			textBOT.setText(transit.currentStop());
+			textBOT.setText(transit.routeFocus().headStop());
 			
 			changeVisibility(R.id.pr, View.INVISIBLE);
 			transit.setApeshit(false);
@@ -158,10 +182,10 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 			if(transit.routeFocus()==null)transit.selectRoute(routeDest);
 			
 			textTOP.setText(transit.routeName() + " " + transit.headSign() + " " + transit.prFocus().prMsg());
-			textBOT.setText(transit.currentStop());
+			textBOT.setText(transit.routeFocus().headStop());
 			
 			transit.setApeshit(false);
-			changeVisibility(R.id.pr, View.VISIBLE);
+			if(!transit.prFocus().iD().equals("0"))changeVisibility(R.id.pr, View.VISIBLE);
 			manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener); 
 			
 		}
@@ -170,19 +194,8 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	
 	private void UI_PR(int iD){
 		boolean addInput = true;
-		
-		Button key1 = (Button) findViewById(R.id.button1);
-		Button key2 = (Button) findViewById(R.id.button2);
-		Button key3 = (Button) findViewById(R.id.button3);
-		Button key4 = (Button) findViewById(R.id.button4);
-		Button key5 = (Button) findViewById(R.id.button5);
-		Button key6 = (Button) findViewById(R.id.button6);
-		Button key7 = (Button) findViewById(R.id.button7);
-		Button key8 = (Button) findViewById(R.id.button8);
-		Button key9 = (Button) findViewById(R.id.button9);
-		Button key0 = (Button) findViewById(R.id.button0);
+
 		Button keyClear = (Button) findViewById(R.id.buttonClear);
-		
 		keyClear.setText("BKSP");
 		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
 		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
@@ -227,43 +240,18 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				
 				manager.removeUpdates(listener);
 				
-				key1.setOnClickListener(this);
-				key2.setOnClickListener(this);
-				key3.setOnClickListener(this);
-				key4.setOnClickListener(this);
-				key5.setOnClickListener(this);
-				key6.setOnClickListener(this);
-				key7.setOnClickListener(this);
-				key8.setOnClickListener(this);
-				key9.setOnClickListener(this);
-				key0.setOnClickListener(this);
-				
-				keyClear.setOnLongClickListener(this);
-				
 				if(transit.routeFocus()!=null) transit.resetApproach();
 				
 				textTOP.setText("Enter P/R Code");
 				textBOT.setText("");
 				transit.setPRStart(false);
+				
 			}else if(textBOT.getText().toString().length()>0) textBOT.setText(textBOT.getText().toString().substring(0,textBOT.getText().toString().length()-1));
 			break;
 		case R.id.buttonSet:
 
 			transit.selectPR(textBOT.getText().toString());
 			setRoute();
-			
-			key1.setOnClickListener(null);
-			key2.setOnClickListener(null);
-			key3.setOnClickListener(null);
-			key4.setOnClickListener(null);
-			key5.setOnClickListener(null);
-			key6.setOnClickListener(null);
-			key7.setOnClickListener(null);
-			key8.setOnClickListener(null);
-			key9.setOnClickListener(null);
-			key0.setOnClickListener(null);
-				
-			keyClear.setOnLongClickListener(null);
 			
 			transit.setPRStart(true);
 			transit.setUIFocus(0);
@@ -274,17 +262,6 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	
 	private void UI_Destination(int iD){
 		boolean addInput = true;
-		
-		Button key1 = (Button) findViewById(R.id.button1);
-		Button key2 = (Button) findViewById(R.id.button2);
-		Button key3 = (Button) findViewById(R.id.button3);
-		Button key4 = (Button) findViewById(R.id.button4);
-		Button key5 = (Button) findViewById(R.id.button5);
-		Button key6 = (Button) findViewById(R.id.button6);
-		Button key7 = (Button) findViewById(R.id.button7);
-		Button key8 = (Button) findViewById(R.id.button8);
-		Button key9 = (Button) findViewById(R.id.button9);
-		Button key0 = (Button) findViewById(R.id.button0);
 		
 		Button keyClear = (Button) findViewById(R.id.buttonClear);
 		keyClear.setText("BKSP");
@@ -333,22 +310,9 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				
 				manager.removeUpdates(listener);
 				
-				key1.setOnClickListener(this);
-				key2.setOnClickListener(this);
-				key3.setOnClickListener(this);
-				key4.setOnClickListener(this);
-				key5.setOnClickListener(this);
-				key6.setOnClickListener(this);
-				key7.setOnClickListener(this);
-				key8.setOnClickListener(this);
-				key9.setOnClickListener(this);
-				key0.setOnClickListener(this);
-				
-				keyClear.setOnLongClickListener(this);
 				if(transit.routeFocus()!=null) transit.resetApproach();
 				
-				ImageView image = (ImageView) findViewById(R.id.search);
-				image.setVisibility(View.INVISIBLE);
+				changeVisibility(R.id.search, View.INVISIBLE);
 				
 				textTOP.setText("Destination Number");
 				textBOT.setText("");
@@ -357,23 +321,9 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 			}
 			else{
 	
-			
 				transit.selectRoute(textBOT.getText().toString());
-				
 				setRoute();
 		
-				key1.setOnClickListener(null);
-				key2.setOnClickListener(null);
-				key3.setOnClickListener(null);
-				key4.setOnClickListener(null);
-				key5.setOnClickListener(null);
-				key6.setOnClickListener(null);
-				key7.setOnClickListener(null);
-				key8.setOnClickListener(null);
-				key9.setOnClickListener(null);
-				key0.setOnClickListener(null);
-					
-				keyClear.setOnLongClickListener(null);
 				transit.setUIFocus(0);
 				keyClear.setText("P/R");
 				transit.setCode(true);
@@ -393,13 +343,25 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	  			case R.id.buttonSet:
 	  				UI_Destination(cue.getId());
 	  				break;
+	  			case R.id.button0:
+	  				if(transit.routeFocus()!=null){
+	  					speakToMe(transit.routeName() + " Line, to, " + transit.headSign().replaceAll("/", ",") +", "+ transit.terminal());
+	  				}
+	  				transit.setUIFocus(0);
+	  				break;
+	  			case R.id.button5:
+	  				speakToMe("STOP REQUESTED");
+	  				transit.setUIFocus(0);
+	  				break;
+	  			default:
+	  				transit.setUIFocus(0);
   			}
 	}
 	  	
 	public boolean onLongClick(View arg0) {
 
 		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
-		textBOT.setText("");
+		if(transit.getUIFocus()!=0)textBOT.setText("");
 		return false;}
 }
 
