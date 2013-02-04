@@ -77,7 +77,7 @@ public class struct{
 		terminal = T;
 	}	
 
-	public String headStop(){return head.getStopName();}
+	public String headStop(){return (head!=null) ? head.getStopName():"";}
 	public String terminal(){return terminal;}
 	public String routeCode(){return routeCode;}
 	public String routeName(){return routeName;}

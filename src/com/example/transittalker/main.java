@@ -119,7 +119,6 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 					
 				}else{
 					//bus has gone off the fixed route path (apeshit)
-					
 					if(transit.stopOffPath()){
 						speakToMe("Approaching " + transit.currentStop());
 						textBOT.setText(transit.nextStop());
@@ -127,7 +126,6 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 					}
 					else textBOT.setText(transit.currentStop());
 				}
-			
 			}
 		};
 
@@ -145,19 +143,22 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		
 		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
 		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
+		TextView textMID = (TextView) findViewById(R.id.displayMID);
 		
 		//route = null && pr = null
 		if(transit.routeFocus() == null && transit.prFocus() == null){
-			textTOP.setText("No P/R Code set");
-			textBOT.setText("No route pattern set");
+			textTOP.setText("No Route Pattern Set");
+			textMID.setText("No P/R Code set");
+			textBOT.setText("");
 			changeVisibility(R.id.pr, View.INVISIBLE);
 		}
 		
 		//route = null && pr != null
 		else if(transit.routeFocus() == null && transit.prFocus() != null){
 		
-				textTOP.setText("P/R Code Set: " + transit.prFocus().prMsg());
-				textBOT.setText("No route pattern set");
+				textTOP.setText("No Route Pattern Set");
+				textMID.setText(transit.prFocus().prMsg());
+				textBOT.setText("");
 
 				if(!transit.prFocus().iD().equals("0")) changeVisibility(R.id.pr, View.VISIBLE);
 			
@@ -167,6 +168,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		else if(transit.routeFocus() != null && transit.prFocus() == null){
 			
 			textTOP.setText(transit.routeName() + " " + transit.headSign());
+			textMID.setText("");
 			textBOT.setText(transit.routeFocus().headStop());
 			
 			changeVisibility(R.id.pr, View.INVISIBLE);
@@ -181,7 +183,8 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 			transit.selectRoute(routeDest,transit.prFocus().iD());
 			if(transit.routeFocus()==null)transit.selectRoute(routeDest);
 			
-			textTOP.setText(transit.routeName() + " " + transit.headSign() + " " + transit.prFocus().prMsg());
+			textTOP.setText(transit.routeName() + " " + transit.headSign());
+			textMID.setText(transit.prFocus().prMsg());
 			textBOT.setText(transit.routeFocus().headStop());
 			
 			transit.setApeshit(false);
@@ -198,6 +201,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		Button keyClear = (Button) findViewById(R.id.buttonClear);
 		keyClear.setText("BKSP");
 		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
+		TextView textMID = (TextView) findViewById(R.id.displayMID);
 		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
 	
 		if(textBOT.getText().toString().length()>12){addInput = false;}
@@ -243,6 +247,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				if(transit.routeFocus()!=null) transit.resetApproach();
 				
 				textTOP.setText("Enter P/R Code");
+				textMID.setText("");
 				textBOT.setText("");
 				transit.setPRStart(false);
 				
@@ -266,6 +271,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		Button keyClear = (Button) findViewById(R.id.buttonClear);
 		keyClear.setText("BKSP");
 		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
+		TextView textMID = (TextView) findViewById(R.id.displayMID);
 		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
 	
 		if(textBOT.getText().toString().length()>12){addInput = false;}
@@ -315,6 +321,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				changeVisibility(R.id.search, View.INVISIBLE);
 				
 				textTOP.setText("Destination Number");
+				textMID.setText("");
 				textBOT.setText("");
 				
 				transit.setCode(false);
@@ -344,9 +351,14 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	  				UI_Destination(cue.getId());
 	  				break;
 	  			case R.id.button0:
-	  				if(transit.routeFocus()!=null){
-	  					speakToMe(transit.routeName() + " Line, to, " + transit.headSign().replaceAll("/", ",") +", "+ transit.terminal());
-	  				}
+	  				if(transit.routeFocus()!=null)
+	  					speakToMe(transit.routeName() 
+	  							+ " Line, " 
+	  							+ transit.headSign().replaceAll("/", ",") 
+	  							+", "
+	  							+ transit.terminal()
+	  					);
+	  				
 	  				transit.setUIFocus(0);
 	  				break;
 	  			case R.id.button5:

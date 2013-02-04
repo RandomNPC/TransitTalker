@@ -85,17 +85,17 @@ public class TransitMain {
 	
 	//upload route info
 	public void setupRoutes(){
-		addRoute("1","","NOT IN SERVICE","","");
-		addRoute("10","A","DOWNTOWN/5TH STREET/ALHAMBRA","","U C Davis Silo");
-		addRoute("10","A","DOWNTOWN/5TH STREET/ALHAMBRA","31","El Cemonte and Glide");
-		addRoute("11","A-LTD","DOWNTOWN/5TH STREET/CANTRILL","","U C Davis Silo");
+		addRoute("1","","Not In Service","","");
+		addRoute("10","A","DOWNTOWN/5th. ST./ALHAMBRA","","U C Davis Silo");
+		addRoute("10","A","DOWNTOWN/5 TH. ST./ALHAMBRA","31","El Cemonte and Glide");
+		addRoute("11","A-LTD","DOWNTOWN/5TH. ST./CANTRILL","","U C Davis Silo");
 		addRoute("20","B","SYCAMORE/DRAKE DRIVE","","U C Davis Memorial Union");
 		addRoute("30","C","SYCAMORE/WAKE FOREST","","U C Davis Silo");
 		addRoute("30","C","SYCAMORE/WAKE FOREST","32","Sycamore and Russell");
-		addRoute("40","D","LAKE BLVD/ARLINGTON","","U C Davis Silo");
-		addRoute("40","D","LAKE BLVD/ARLINGTON","43","U C Davis Silo");
-		addRoute("50","E","DOWNTOWN/F ST/J ST","","U C Davis Memorial Union");
-		addRoute("50","E","DOWNTOWN/F ST/J ST","34","F Street and Covell");
+		addRoute("40","D","LAKE BLVD./ARLINGTON","","U C Davis Silo");
+		addRoute("40","D","LAKE BLVD./ARLINGTON","43","U C Davis Silo");
+		addRoute("50","E","DOWNTOWN/F ST./J ST.","","U C Davis Memorial Union");
+		addRoute("50","E","DOWNTOWN/F ST./J ST.","34","F Street and Covell");
 		addRoute("60","F","OAK AVE/EAST ALVARADO/CATALINA","","U C Davis Memorial Union");
 		addRoute("60","F","OAK AVE/EAST ALVARADO/CATALINA","35","Anderson and Alvarado");
 		addRoute("70","G","ANDERSON/ALVERADO/NORTH SYCAMORE","","U C Davis Memorial Union");
@@ -484,7 +484,7 @@ public class TransitMain {
 			list.addStop(38.5437499, -121.74982, "UC Davis Memorial Union. End of Line", "NB");
 			
 		} 
-		else if (listName == "K" && pR == "") {
+		else if (listName == "K" && pR == "43") {
 			list.addStop(38.5464899, -121.7635, "Russell Blvd & Sycamore Ln", "WB");
 			list.addStop(38.5465499, -121.7710199, "Russell Blvd & Arthur St", "WB");
 			list.addStop(38.5467999, -121.78585, "Russell Blvd & Arlington Farms", "WB");

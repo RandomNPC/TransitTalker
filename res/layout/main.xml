@@ -136,36 +136,13 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/displayTOP"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="23dp"
-        android:gravity="center_horizontal"
-        android:text="@string/tRaNsIt"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/displayBOTTOM"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/displayTOP"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp"
-        android:gravity="center_horizontal"
-        android:text="@string/TaLkEr"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <ImageView
         android:id="@+id/search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/displayBOTTOM"
         android:layout_alignParentRight="true"
         android:contentDescription="@string/image"
-        android:src="@drawable/searching"/>
+        android:src="@drawable/searching" />
 
     <ImageView
         android:id="@+id/fence"
@@ -180,9 +157,37 @@
         android:id="@+id/pr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/displayBOTTOM"
         android:layout_alignParentLeft="true"
         android:contentDescription="@string/image"
         android:src="@drawable/prcode" />
+
+    <TextView
+        android:id="@+id/displayTOP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/search"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:text="@string/tRaNsIt"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/displayMID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/fence"
+        android:layout_centerHorizontal="true"
+        android:text="@string/prmsgs"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/displayBOTTOM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/displayMID"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:text="@string/TaLkEr"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
