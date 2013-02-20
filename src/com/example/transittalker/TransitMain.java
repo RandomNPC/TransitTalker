@@ -29,7 +29,7 @@ public class TransitMain {
 	
 	//universal function
 	private boolean isEqual(String marco, String polo){
-		if(marco.length() > 0 && polo.length() > 0){
+		if(marco.length() > 0 && polo.length() > 0 && marco.length() < 4 && polo.length()<4){
 			return (Integer.parseInt(marco) == Integer.parseInt(polo))? true:false;
 		}
 		else return false;
@@ -86,8 +86,8 @@ public class TransitMain {
 	//upload route info
 	public void setupRoutes(){
 		addRoute("1","","Not In Service","","");
-		addRoute("10","A","DOWNTOWN/5th. ST./ALHAMBRA","","U C Davis Silo");
-		addRoute("10","A","DOWNTOWN/5 TH. ST./ALHAMBRA","31","El Cemonte and Glide");
+		addRoute("10","A","DOWNTOWN/5TH ST./ALHAMBRA","","U C Davis Silo");
+		addRoute("10","A","DOWNTOWN/5TH ST./ALHAMBRA","31","El Cemonte and Glide");
 		addRoute("11","A-LTD","DOWNTOWN/5TH. ST./CANTRILL","","U C Davis Silo");
 		addRoute("20","B","SYCAMORE/DRAKE DRIVE","","U C Davis Memorial Union");
 		addRoute("30","C","SYCAMORE/WAKE FOREST","","U C Davis Silo");
@@ -108,7 +108,7 @@ public class TransitMain {
 		addRoute("120","L","EAST 8TH STREET/POLE LINE/MOORE/LOYOLA","39","Loyola and Pole Line");
 		addRoute("130","M","B STREET/COWELL/DREW","","U C Davis Memorial Union");
 		addRoute("130","M","B STREET/COWELL/DREW","37","Cowell and Valdora");
-		addRoute("150", "O", "SHOPPERS SHUTTLE/DOWTOWN/TARGET/WEST VILLAGE", "","U C Davis Silo");
+		addRoute("150", "O", "DOWTOWN/TARGET/WEST VILLAGE", "","U C Davis Silo");
 		addRoute("160","P","DAVIS PERIMETER COUNTER CLOCKWISE","","U C Davis Memorial Union");
 		addRoute("160","P","DAVIS PERIMETER COUNTER CLOCKWISE","38","J and Covell");
 		addRoute("170","Q","DAVIS PERIMETER CLOCKWISE","","U C Davis Memorial Union");
@@ -4189,7 +4189,7 @@ public class TransitMain {
 		}
 	}
 
-	
+ 
 	//UI
 	public int getUIFocus(){return UIfocus;}
 	public void setUIFocus(int id){UIfocus=id;}

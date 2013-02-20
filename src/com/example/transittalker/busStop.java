@@ -8,6 +8,7 @@ public class busStop {
 	private String direction;
 	private boolean silence;
 	private busStop next;
+	private busStop prev;
 
 	public busStop(){
 		latitude = 0;
@@ -16,15 +17,17 @@ public class busStop {
 		direction="";
 		silence = false;
 		next = null;
+		prev = null;
 	}
 	
-	public busStop(double lat,double lon, String sN, String dir, boolean sil, busStop n){
+	public busStop(double lat,double lon, String sN, String dir, boolean sil, busStop n,busStop p){
 		latitude = lat;
 		longitude = lon;
 		stopName = sN;
 		direction= dir;
 		silence = sil;
 		next = n;
+		prev = p;
 	}
 	
 	public double getLat(){return latitude;}
@@ -34,6 +37,7 @@ public class busStop {
 	public boolean isSilenced(){return silence;}
 	public void setSilence(boolean sil){silence = sil;}
 	busStop getNext(){return next;}
+	busStop getPrev(){return prev;}
 	void setNext(busStop n){next = n;}
-	
+	void setPrev(busStop p){prev = p;}
 }

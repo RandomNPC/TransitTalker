@@ -104,12 +104,13 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				transit.setBusPos(currentLocation.getLatitude(), currentLocation.getLongitude(), currentLocation.getBearing());
 				TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
 
-				if(transit.onTrack()) changeVisibility(R.id.fence, View.VISIBLE);
-				else changeVisibility(R.id.fence, View.INVISIBLE);
-				if(transit.isApeshit()) changeVisibility(R.id.search, View.VISIBLE);
-				else changeVisibility(R.id.search, View.INVISIBLE);
+				if(transit.onTrack())changeVisibility(R.id.fence, View.INVISIBLE);
+				else changeVisibility(R.id.fence, View.VISIBLE);
+				if(transit.isApeshit()) changeVisibility(R.id.search, View.INVISIBLE);
+				else changeVisibility(R.id.search, View.VISIBLE);
 				
 				if(transit.onTrack() && transit.isApeshit()){
+			
 					//on the fixed route path
 					if(transit.atStop()){
 						speakToMe("Approaching "+ transit.currentStop());
@@ -118,6 +119,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 					else textBOT.setText(transit.currentStop());
 					
 				}else{
+					
 					//bus has gone off the fixed route path (apeshit)
 					if(transit.stopOffPath()){
 						speakToMe("Approaching " + transit.currentStop());
@@ -179,9 +181,9 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		//route != null && pr != null\
 		else if(transit.routeFocus() != null && transit.prFocus() != null){
 			
-			String routeDest = transit.routeFocus().routeCode();
-			transit.selectRoute(routeDest,transit.prFocus().iD());
-			if(transit.routeFocus()==null)transit.selectRoute(routeDest);
+			//String routeDest = transit.routeFocus().routeCode();
+			//transit.selectRoute(routeDest,transit.prFocus().iD());
+			//if(transit.routeFocus()==null)transit.selectRoute(routeDest);
 			
 			textTOP.setText(transit.routeName() + " " + transit.headSign());
 			textMID.setText(transit.prFocus().prMsg());
@@ -351,14 +353,9 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	  				UI_Destination(cue.getId());
 	  				break;
 	  			case R.id.button0:
-	  				if(transit.routeFocus()!=null)
-	  					speakToMe(transit.routeName() 
-	  							+ " Line, " 
-	  							+ transit.headSign().replaceAll("/", ",") 
-	  							+", "
-	  							+ transit.terminal()
-	  					);
-	  				
+	  				if(transit.routeFocus()!=null){
+	  					speakToMe(transit.routeName() + " Line, to," + transit.headSign().replaceAll("/", ",") +", " + transit.terminal());
+	  				}
 	  				transit.setUIFocus(0);
 	  				break;
 	  			case R.id.button5:

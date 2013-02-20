@@ -95,11 +95,13 @@ public class struct{
 	
 	//Linked List members
 	public void addStop(double lat,double lon, String sN, String dir) {
-		busStop create = new busStop(lat,lon,sN,dir,false,null);
+		busStop create = new busStop(lat,lon,sN,dir,true,null,null);
 		if (head == null)
 			head = create;
 		else {
 			tail.setNext(create);
+			create.setPrev(tail);
+			create.getPrev().setSilence(false);
 		}
 		tail = create;
 		create = null;
@@ -110,6 +112,7 @@ public class struct{
 		atStop = pos.getStopName();
 		if(!pos.isSilenced() && distanceTo(pos.getLat(),pos.getLon()) && inDirection(busBearing,pos.getDir())){
 			pos.setSilence(true);
+			if(pos!=tail)tail.setSilence(false);
 			if(pos.getNext()!=null){
 				pos = pos.getNext();
 				nextStop = pos.getStopName();
