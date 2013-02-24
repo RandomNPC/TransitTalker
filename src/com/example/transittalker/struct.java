@@ -101,7 +101,7 @@ public class struct{
 		else {
 			tail.setNext(create);
 			create.setPrev(tail);
-			create.getPrev().setSilence(false);
+			tail.setSilence(false);
 		}
 		tail = create;
 		create = null;

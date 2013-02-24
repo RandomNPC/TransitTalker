@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,13 +26,18 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	LocationManager manager;
 	TextToSpeech tts;
 	TransitMain transit = new TransitMain(100);
-	
+
 	//TextToSpeech
 	void speakToMe(final String speakStopName) {
+		
+		
 		tts = new TextToSpeech(main.this, new TextToSpeech.OnInitListener() {
 
 			public void onInit(int status) {
 				if (status != TextToSpeech.ERROR) {
+					//HashMap<String, String> params = new HashMap<String, String>();
+					//params.put(TextToSpeech.Engine.KEY_FEATURE_NETWORK_SYNTHESIS,"true");
+					
 					tts.setLanguage(Locale.US);
 					tts.speak(speakStopName, TextToSpeech.QUEUE_ADD, null);
 				}
@@ -51,10 +57,10 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
     public void onCreate(Bundle savedInstanceState) {
         	
     	super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-
-        //Settings
-		setRequestedOrientation(0);
+    	setContentView(R.layout.main);
+        Log.i("LETS GO!","OnCreate");
+    	//Settings
+		setRequestedOrientation(0); //stupid method crashes the app!!!!!!AAARGGGHH RRAAAGEE
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		AudioManager aM = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		aM.setStreamVolume(AudioManager.STREAM_MUSIC, aM.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
@@ -89,10 +95,10 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		changeVisibility(R.id.search,View.INVISIBLE);
 		changeVisibility(R.id.fence, View.INVISIBLE);
 		changeVisibility(R.id.pr, View.INVISIBLE);
-
-		transit.setupRoutes();
+	
+		transit.setupRoutes(this,getResources().openRawResource(R.raw.sup));
 		transit.setupPR();
-		
+	
 		manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		listener = new LocationListener() {
 			
@@ -130,10 +136,39 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				}
 			}
 		};
-
 		transit.selectRoute("0","0");
 		setRoute();
     }
+
+    @Override
+	protected void onDestroy() {
+		Log.i("TRIGGERED","OnDestroy");
+		super.onDestroy();
+	}
+
+	@Override
+	protected void onPause() {
+		Log.i("TRIGGERED","OnPause");
+		super.onPause();
+	}
+
+	@Override
+	protected void onRestart() {
+		Log.i("TRIGGERED","OnRestart");
+		super.onRestart();
+	}
+
+	@Override
+	protected void onStart() {
+		Log.i("TRIGGERED","OnStart");
+		super.onStart();
+	}
+
+	@Override
+	protected void onStop() {
+		Log.i("TRIGGERED","OnStop");
+		super.onStop();
+	}
 
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -181,9 +216,9 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		//route != null && pr != null\
 		else if(transit.routeFocus() != null && transit.prFocus() != null){
 			
-			//String routeDest = transit.routeFocus().routeCode();
-			//transit.selectRoute(routeDest,transit.prFocus().iD());
-			//if(transit.routeFocus()==null)transit.selectRoute(routeDest);
+			String routeDest = transit.routeFocus().routeCode();
+			transit.selectRoute(routeDest,transit.prFocus().iD());
+			if(transit.routeFocus()==null)transit.selectRoute(routeDest);
 			
 			textTOP.setText(transit.routeName() + " " + transit.headSign());
 			textMID.setText(transit.prFocus().prMsg());
@@ -354,7 +389,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	  				break;
 	  			case R.id.button0:
 	  				if(transit.routeFocus()!=null){
-	  					speakToMe(transit.routeName() + " Line, to," + transit.headSign().replaceAll("/", ",") +", " + transit.terminal());
+	  					speakToMe(transit.terminal());
 	  				}
 	  				transit.setUIFocus(0);
 	  				break;

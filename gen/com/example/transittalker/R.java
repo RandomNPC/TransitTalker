@@ -50,6 +50,7 @@ public final class R {
     }
     public static final class raw {
         public static final int moo=0x7f040000;
+        public static final int sup=0x7f040001;
     }
     public static final class string {
         public static final int BKSP=0x7f05000e;
