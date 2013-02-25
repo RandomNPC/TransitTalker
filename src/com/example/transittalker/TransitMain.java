@@ -13,36 +13,34 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.util.Log;
 
-@SuppressWarnings("unused")
+
 public class TransitMain{
 
 	private struct routeFocus;
 	private prCode prFocus;
 	private List<struct> route;
 	private List<prCode> pRCode;
-	private double minDistance;
 	private boolean setCode;
 	private boolean apeshit;
 	private int UIfocus;
 	private boolean PRStart;
-	private main name;
+	private List<struct> select;
+	private int multiple;
 	
 	public TransitMain(double min){
 		routeFocus = null;
 		prFocus = null;
 		route = new LinkedList<struct>();
 		pRCode = new LinkedList<prCode>();
-		minDistance = min;
 		setCode = true;
 		apeshit = false;
 		UIfocus = 0;
 		PRStart = true;
-		name = null;
+		select = new LinkedList<struct>();
+		multiple = 0;
 	}
 	
 	//universal function
@@ -57,35 +55,39 @@ public class TransitMain{
 	public void setPRStart(boolean val) {PRStart=val;}
 	public void setApeshit(boolean val){apeshit=val;}
 	public void setCode(boolean val){setCode=val;}
+	public void setMulti(int val){multiple = val;}
 	boolean isSetCode(){return setCode;}
 	boolean isApeshit(){return apeshit;}
 	boolean PRStart(){return PRStart;}
+	int multiDest(){return multiple;}
 	
 	//select route
 	public void selectRoute(String rC){
-		routeFocus = null;
+		List<struct> list = new LinkedList<struct>();
 		for(struct l: route){ 
 			if(isEqual(rC,l.routeCode())){
-				routeFocus = l;
-				break;
+				list.add(l);
 			}
 		}
+		if(list.size()>0)select = list;
+		else select = null;
+		list = null;
 	}
 	
-	
-	public void selectRoute(String rC, String pR){
-		
-		routeFocus = null;
-		for(struct l: route){ 
-			if(isEqual(rC,l.routeCode()) && isEqual(pR,l.prCode())){
-				routeFocus = l;
-			}
+	public void setFocus(struct l){
+		routeFocus = l;
+	}
+
+	public void removeUnusedFocus(int keep){
+		for(int k = 0; k<select.size(); k++){
+			if(k!=keep)select.remove(k);
 		}
 	}
 	
 	//return selections
 	public prCode prFocus(){return prFocus;}
 	public struct routeFocus(){return routeFocus;}
+	public List<struct> selectFocus(){return select;}
 	
 	public String terminal(){return routeFocus.terminal();}
 	public String routeCode(){return routeFocus.routeCode();}

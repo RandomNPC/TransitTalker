@@ -90,7 +90,6 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		key0.setOnClickListener(this);
 		keySet.setOnClickListener(this);
 		keyClear.setOnClickListener(this);
-		keyClear.setOnLongClickListener(this);
 		
 		changeVisibility(R.id.search,View.INVISIBLE);
 		changeVisibility(R.id.fence, View.INVISIBLE);
@@ -136,39 +135,10 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				}
 			}
 		};
-		transit.selectRoute("0","0");
+	
+		transit.selectRoute("0");
 		setRoute();
     }
-
-    @Override
-	protected void onDestroy() {
-		Log.i("TRIGGERED","OnDestroy");
-		super.onDestroy();
-	}
-
-	@Override
-	protected void onPause() {
-		Log.i("TRIGGERED","OnPause");
-		super.onPause();
-	}
-
-	@Override
-	protected void onRestart() {
-		Log.i("TRIGGERED","OnRestart");
-		super.onRestart();
-	}
-
-	@Override
-	protected void onStart() {
-		Log.i("TRIGGERED","OnStart");
-		super.onStart();
-	}
-
-	@Override
-	protected void onStop() {
-		Log.i("TRIGGERED","OnStop");
-		super.onStop();
-	}
 
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -183,7 +153,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		TextView textMID = (TextView) findViewById(R.id.displayMID);
 		
 		//route = null && pr = null
-		if(transit.routeFocus() == null && transit.prFocus() == null){
+		if(transit.selectFocus() == null && transit.prFocus() == null){
 			textTOP.setText("No Route Pattern Set");
 			textMID.setText("No P/R Code set");
 			textBOT.setText("");
@@ -191,7 +161,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		}
 		
 		//route = null && pr != null
-		else if(transit.routeFocus() == null && transit.prFocus() != null){
+		else if(transit.selectFocus() == null && transit.prFocus() != null){
 		
 				textTOP.setText("No Route Pattern Set");
 				textMID.setText(transit.prFocus().prMsg());
@@ -202,34 +172,85 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		}
 		
 		//route != null && pr = null
-		else if(transit.routeFocus() != null && transit.prFocus() == null){
+		//route != null && pr != null
+		else if(transit.selectFocus() != null){
 			
-			textTOP.setText(transit.routeName() + " " + transit.headSign());
-			textMID.setText("");
-			textBOT.setText(transit.routeFocus().headStop());
+			if(transit.selectFocus().size()>1){ //more than one route with the same code!
+				transit.setUIFocus(10);
+				transit.setFocus(transit.selectFocus().get(0));
+				
+				textTOP.setText(transit.routeName() + " " + transit.headSign());
+				textMID.setText("");
+				textBOT.setText("Select Destination");
+				
+			}else{
+				
+				transit.setFocus(transit.selectFocus().get(0));
 			
-			changeVisibility(R.id.pr, View.INVISIBLE);
-			transit.setApeshit(false);
-			manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener); 
-		}
+				textTOP.setText(transit.routeName() + " " + transit.headSign());
+				textBOT.setText(transit.routeFocus().headStop());
+
+				if(transit.prFocus()!=null){
+					if(!transit.prFocus().iD().equals("0"))changeVisibility(R.id.pr, View.VISIBLE);
+					textMID.setText(transit.prFocus().prMsg());
+				}else{
+					textMID.setText("");
+				}
+				
+				transit.setApeshit(false);
+				manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
+			}
+		}	
+	}
+	
+	private void UI_multiSelect(int iD){
 		
-		//route != null && pr != null\
-		else if(transit.routeFocus() != null && transit.prFocus() != null){
-			
-			String routeDest = transit.routeFocus().routeCode();
-			transit.selectRoute(routeDest,transit.prFocus().iD());
-			if(transit.routeFocus()==null)transit.selectRoute(routeDest);
-			
-			textTOP.setText(transit.routeName() + " " + transit.headSign());
-			textMID.setText(transit.prFocus().prMsg());
-			textBOT.setText(transit.routeFocus().headStop());
-			
-			transit.setApeshit(false);
-			if(!transit.prFocus().iD().equals("0"))changeVisibility(R.id.pr, View.VISIBLE);
-			manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener); 
-			
-		}
+		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
+		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
+		TextView textMID = (TextView) findViewById(R.id.displayMID);
 		
+		switch(iD){
+			case R.id.button3: //scroll left
+				if(transit.multiDest()>0){
+					transit.setMulti(transit.multiDest()-1);
+					
+					transit.setFocus(transit.selectFocus().get(transit.multiDest()));
+					textTOP.setText(transit.routeName() + " " + transit.headSign());
+					textMID.setText("");
+					textBOT.setText("Select Destination");
+				}
+				break;
+			case R.id.button4: //scroll right
+				if(transit.multiDest()<transit.selectFocus().size()-1){
+					transit.setMulti(transit.multiDest()+1);
+					
+					transit.setFocus(transit.selectFocus().get(transit.multiDest()));
+					textTOP.setText(transit.routeName() + " " + transit.headSign());
+					textMID.setText("");
+					textBOT.setText("Select Destination");
+				}
+				break;
+			case R.id.buttonSet: //accepted
+				
+				transit.setFocus(transit.selectFocus().get(transit.multiDest()));
+				transit.removeUnusedFocus(transit.multiDest());
+				textTOP.setText(transit.routeName() + " " + transit.headSign());
+				textBOT.setText(transit.routeFocus().headStop());
+				
+				if(transit.prFocus()!=null){
+					if(!transit.prFocus().iD().equals("0"))changeVisibility(R.id.pr, View.VISIBLE);
+					textMID.setText(transit.prFocus().prMsg());
+				}else{
+					textMID.setText("");
+				}
+
+				transit.setApeshit(false);
+				manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
+				
+				transit.setMulti(0);
+				transit.setUIFocus(0);
+				break;
+		}
 	}
 	
 	private void UI_PR(int iD){
@@ -280,7 +301,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				changeVisibility(R.id.pr, View.INVISIBLE);
 				
 				manager.removeUpdates(listener);
-				
+				keyClear.setOnLongClickListener(this);
 				if(transit.routeFocus()!=null) transit.resetApproach();
 				
 				textTOP.setText("Enter P/R Code");
@@ -294,7 +315,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 
 			transit.selectPR(textBOT.getText().toString());
 			setRoute();
-			
+			keyClear.setOnLongClickListener(null);
 			transit.setPRStart(true);
 			transit.setUIFocus(0);
 			keyClear.setText("P/R");
@@ -352,7 +373,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 			if(transit.isSetCode()){
 				
 				manager.removeUpdates(listener);
-				
+				keyClear.setOnLongClickListener(this);
 				if(transit.routeFocus()!=null) transit.resetApproach();
 				
 				changeVisibility(R.id.search, View.INVISIBLE);
@@ -366,9 +387,9 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 			else{
 	
 				transit.selectRoute(textBOT.getText().toString());
-				setRoute();
-		
 				transit.setUIFocus(0);
+				setRoute();
+				keyClear.setOnLongClickListener(null);
 				keyClear.setText("P/R");
 				transit.setCode(true);
 			}
@@ -379,7 +400,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	public void onClick(View cue){
   
   			if(transit.getUIFocus()==0) transit.setUIFocus(cue.getId());
-  	
+  			
   			switch(transit.getUIFocus()){
 	  			case R.id.buttonClear:
 	  				UI_PR(cue.getId());
@@ -388,14 +409,15 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	  				UI_Destination(cue.getId());
 	  				break;
 	  			case R.id.button0:
-	  				if(transit.routeFocus()!=null){
-	  					speakToMe(transit.terminal());
-	  				}
+	  				if(transit.routeFocus()!=null)speakToMe(transit.terminal());
 	  				transit.setUIFocus(0);
 	  				break;
 	  			case R.id.button5:
 	  				speakToMe("STOP REQUESTED");
 	  				transit.setUIFocus(0);
+	  				break;
+	  			case 10:
+	  				UI_multiSelect(cue.getId());
 	  				break;
 	  			default:
 	  				transit.setUIFocus(0);
@@ -405,7 +427,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	public boolean onLongClick(View arg0) {
 
 		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
-		if(transit.getUIFocus()!=0)textBOT.setText("");
+		textBOT.setText("");
 		return false;}
 }
 
