@@ -95,8 +95,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		changeVisibility(R.id.fence, View.INVISIBLE);
 		changeVisibility(R.id.pr, View.INVISIBLE);
 	
-		transit.setupRoutes(this,getResources().openRawResource(R.raw.sup));
-		transit.setupPR();
+		transit.setupRoutes(this,getResources().openRawResource(R.raw.route_manifest));
 	
 		manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		listener = new LocationListener() {

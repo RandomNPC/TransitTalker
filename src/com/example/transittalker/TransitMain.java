@@ -124,15 +124,15 @@ public class TransitMain{
 			dialog = new ProgressDialog(activity);
 			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			dialog.setMax(4);
-			dialog.setMessage("Uploading routes...");
+			dialog.setMessage("Uploading information from XML...");
 			dialog.show();
 		}
-
+		
 		@Override
 		protected void onPostExecute(Void result) {
 			dialog.dismiss();
 		}
-
+	 
 		@Override
 		protected Void doInBackground(Void... params) {
 			SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -158,6 +158,7 @@ public class TransitMain{
 			try {
 				xr.parse(new InputSource(is));
 				route = parser.getXMLrouteList();
+				pRCode = parser.getXMLprCode();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (SAXException e) {
@@ -176,59 +177,7 @@ public class TransitMain{
     	
     }
 	
-	
-	//Public relations code
-	public void setupPR(){
-		addPR("0", " ");
-		addPR("1", "Not In Service");
-		addPR("2", "To Garage");
-		addPR("3", "Training Bus/Not in Service");
-		addPR("4", "Road Test/Not in Service");
-		addPR("5", "Inbound Only");
-		addPR("6", "Outbound Only");
-		addPR("7", "Drop Off Only");
-		addPR("8", "Bus Full");
-		addPR("9", "Please Take Next Bus");
-		addPR("10", "Charter");
-		addPR("11", "Campus Tour");
-		addPR("12", "Event Shuttle");
-		addPR("13", "Welcome Aboard");
-		addPR("14", "Happy Holidays");
-		addPR("15", "Good Morning");
-		addPR("16", "Go Ags!");
-		addPR("17", "Aggie Pride!");
-		addPR("18", "Spare-The-Air/Ride Free");
-		addPR("19", "Nowhere In Particular");
-		addPR("20", "Employee Shuttle");
-		addPR("21", "Special");
-		addPR("22", "Unitrans");
-		addPR("23", "Tipsy Taxi");
-		addPR("24", "Amtrak Shuttle");
-		addPR("25", "Uni-Ride");
-		addPR("26", "Memorial Union");
-		addPR("27", "UC Davis Silo");
-		addPR("28", "Summer Service");
-		addPR("29", "Finals Service");
-		addPR("30", "Break Service");
-		addPR("31", "To El Cemonte/Glide");
-		addPR("32", "To Russell/Sycamore");
-		addPR("33", "To Lake/Arlington");
-		addPR("34", "To F St/Covell");
-		addPR("35", "To Anderson/Alvaradro");
-		addPR("36", "To N. Sycamore Loop");
-		addPR("37", "To Cowell/Valdora");
-		addPR("38", "To J St/Covell");
-		addPR("39", "To Pole Line/Loyola");
-		addPR("40", "To Cowell/Valdora via Lillard");
-		addPR("41", "Picnic Day");
-		addPR("42", "Parking Shuttle");
-		addPR("43", "Night Service");
-		addPR("44", "Vote Today/ASUCD Elections");
-		addPR("99", "Out Of Service");
-	}
-	private void addPR(String iD, String prMsg){pRCode.add(new prCode(iD,prMsg));}
-	
-	public void selectPR(String pR){
+    public void selectPR(String pR){
 		prFocus = null;
 		for(prCode p : pRCode){
 			if(isEqual(p.iD(), pR)){
