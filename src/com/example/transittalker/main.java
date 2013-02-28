@@ -1,9 +1,17 @@
 package com.example.transittalker;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
+import android.gesture.Gesture;
+import android.gesture.GestureLibraries;
+import android.gesture.GestureLibrary;
+import android.gesture.GestureOverlayView;
+import android.gesture.GestureOverlayView.OnGesturePerformedListener;
+import android.gesture.Prediction;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,13 +28,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class main extends Activity implements OnClickListener, OnLongClickListener{
+public class main extends Activity implements OnClickListener, OnLongClickListener, OnGesturePerformedListener{
 
 	LocationListener listener;
 	LocationManager manager;
 	TextToSpeech tts;
 	TransitMain transit = new TransitMain(100);
-
+	GestureLibrary gls;
+	GestureOverlayView golw;
+	
 	//TextToSpeech
 	void speakToMe(final String speakStopName) {
 		
@@ -50,8 +60,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		ImageView image = (ImageView) findViewById(imageID);
 		image.setVisibility(status);
 	}
-	
-	
+		
 	//default
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,6 +74,18 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		AudioManager aM = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		aM.setStreamVolume(AudioManager.STREAM_MUSIC, aM.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
 
+		golw = (GestureOverlayView) findViewById(R.id.gesturearea);
+		
+		golw.setGestureColor(Color.BLUE);
+		golw.setGestureVisible(true);
+		golw.setUncertainGestureColor(Color.RED);
+		
+		golw.addOnGesturePerformedListener(this);
+		gls = GestureLibraries.fromRawResource(this,R.raw.gestures);
+		if(!gls.load()){
+			Log.i("GESTURELIB","Gesture Library failed to load");
+		}
+		
 		Button key1 = (Button) findViewById(R.id.button1);
 		Button key2 = (Button) findViewById(R.id.button2);
 		Button key3 = (Button) findViewById(R.id.button3);
@@ -94,6 +115,8 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		changeVisibility(R.id.search,View.INVISIBLE);
 		changeVisibility(R.id.fence, View.INVISIBLE);
 		changeVisibility(R.id.pr, View.INVISIBLE);
+		changeVisibility(R.id.leftArrow, View.INVISIBLE);
+		changeVisibility(R.id.rightArrow, View.INVISIBLE);
 	
 		transit.setupRoutes(this,getResources().openRawResource(R.raw.route_manifest));
 	
@@ -177,6 +200,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 			if(transit.selectFocus().size()>1){ //more than one route with the same code!
 				transit.setUIFocus(10);
 				transit.setFocus(transit.selectFocus().get(0));
+				changeVisibility(R.id.rightArrow, View.VISIBLE);
 				
 				textTOP.setText(transit.routeName() + " " + transit.headSign());
 				textMID.setText("");
@@ -209,27 +233,10 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		TextView textMID = (TextView) findViewById(R.id.displayMID);
 		
 		switch(iD){
-			case R.id.button3: //scroll left
-				if(transit.multiDest()>0){
-					transit.setMulti(transit.multiDest()-1);
-					
-					transit.setFocus(transit.selectFocus().get(transit.multiDest()));
-					textTOP.setText(transit.routeName() + " " + transit.headSign());
-					textMID.setText("");
-					textBOT.setText("Select Destination");
-				}
-				break;
-			case R.id.button4: //scroll right
-				if(transit.multiDest()<transit.selectFocus().size()-1){
-					transit.setMulti(transit.multiDest()+1);
-					
-					transit.setFocus(transit.selectFocus().get(transit.multiDest()));
-					textTOP.setText(transit.routeName() + " " + transit.headSign());
-					textMID.setText("");
-					textBOT.setText("Select Destination");
-				}
-				break;
 			case R.id.buttonSet: //accepted
+				
+				changeVisibility(R.id.leftArrow, View.INVISIBLE);
+				changeVisibility(R.id.rightArrow, View.INVISIBLE);
 				
 				transit.setFocus(transit.selectFocus().get(transit.multiDest()));
 				transit.removeUnusedFocus(transit.multiDest());
@@ -428,5 +435,65 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
 		textBOT.setText("");
 		return false;}
+
+	
+	public void onGesturePerformed(GestureOverlayView arg0, Gesture g) {
+
+		// TODO Auto-generated method stub
+		ArrayList<Prediction> predictions = gls.recognize(g);
+		Log.i("GESTURE","Gesture called!");
+		if(predictions.size()>0){
+			Prediction prediction = predictions.get(0);
+			if(prediction.score>1){
+				String s = prediction.name;
+				
+				Log.i("GESTURE",s);
+				
+				if(s.contains("leftSwipe")){
+
+					TextView textTOP = (TextView) findViewById(R.id.displayTOP);
+					TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
+					TextView textMID = (TextView) findViewById(R.id.displayMID);
+					
+					if(transit.multiDest()>0){
+						
+						transit.setMulti(transit.multiDest()-1);
+						if(transit.multiDest()==0) changeVisibility(R.id.leftArrow, View.INVISIBLE);
+						else changeVisibility(R.id.leftArrow, View.VISIBLE);
+						if(transit.multiDest()==transit.selectFocus().size()-1) changeVisibility(R.id.rightArrow, View.INVISIBLE);
+						else changeVisibility(R.id.rightArrow, View.VISIBLE);
+						
+						transit.setFocus(transit.selectFocus().get(transit.multiDest()));
+						textTOP.setText(transit.routeName() + " " + transit.headSign());
+						textMID.setText("");
+						textBOT.setText("Select Destination");
+					}
+				}
+				else if(s.contains("rightSwipe")){
+
+					TextView textTOP = (TextView) findViewById(R.id.displayTOP);
+					TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
+					TextView textMID = (TextView) findViewById(R.id.displayMID);
+					
+					if(transit.multiDest()<transit.selectFocus().size()-1){
+						transit.setMulti(transit.multiDest()+1);
+						
+						if(transit.multiDest()==0) changeVisibility(R.id.leftArrow, View.INVISIBLE);
+						else changeVisibility(R.id.leftArrow, View.VISIBLE);
+						if(transit.multiDest()==transit.selectFocus().size()-1) changeVisibility(R.id.rightArrow, View.INVISIBLE);
+						else changeVisibility(R.id.rightArrow, View.VISIBLE);
+						
+						transit.setFocus(transit.selectFocus().get(transit.multiDest()));
+						textTOP.setText(transit.routeName() + " " + transit.headSign());
+						textMID.setText("");
+						textBOT.setText("Select Destination");	
+					}
+				}
+			}
+		}
+	
+	}
+
+
 }
 

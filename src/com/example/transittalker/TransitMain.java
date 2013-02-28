@@ -129,9 +129,7 @@ public class TransitMain{
 		}
 		
 		@Override
-		protected void onPostExecute(Void result) {
-			dialog.dismiss();
-		}
+		protected void onPostExecute(Void result) {dialog.dismiss();}
 	 
 		@Override
 		protected Void doInBackground(Void... params) {
@@ -171,10 +169,7 @@ public class TransitMain{
 		}
 
 		@Override
-		protected void onProgressUpdate(Void... values) {
-			dialog.incrementProgressBy(1);
-		}
-    	
+		protected void onProgressUpdate(Void... values) {dialog.incrementProgressBy(1);}
     }
 	
     public void selectPR(String pR){
