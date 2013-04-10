@@ -1,15 +1,20 @@
 package com.example.transittalker;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.gesture.Gesture;
 import android.gesture.GestureLibraries;
 import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
+import android.gesture.GestureStore;
 import android.gesture.Prediction;
 import android.graphics.Color;
 import android.location.Location;
@@ -17,6 +22,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
@@ -24,7 +30,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,6 +42,38 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	TransitMain transit = new TransitMain(100);
 	GestureLibrary gls;
 	GestureOverlayView golw;
+	TextView textTOP;
+	TextView textBOT;
+	TextView textMID;
+	HashMap<String,String> pronounce = new HashMap<String,String>();
+	FileIO fio = new FileIO(this);
+	SharedPreferences spf;
+	Client myClient;
+	
+	
+	String speak(String obj){
+		
+		obj = obj.toLowerCase(Locale.US);
+		
+		int index = -1;
+		
+		Iterator<Entry<String, String>> it = pronounce.entrySet().iterator();
+		while(it.hasNext()){
+			
+			String key = it.next().getKey();
+			
+			index = obj.indexOf(key);
+			if(index>-1){
+				obj = obj.replace(key,pronounce.get(key));
+			}
+		}
+		
+		return obj;
+	}
+	
+	private void pronounce_toLower(String a, String b){
+		pronounce.put(a.toLowerCase(Locale.getDefault()),b.toLowerCase(Locale.getDefault()));
+	}
 	
 	//TextToSpeech
 	void speakToMe(final String speakStopName) {
@@ -49,7 +87,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 					//params.put(TextToSpeech.Engine.KEY_FEATURE_NETWORK_SYNTHESIS,"true");
 					
 					tts.setLanguage(Locale.US);
-					tts.speak(speakStopName, TextToSpeech.QUEUE_ADD, null);
+					tts.speak(speak(speakStopName), TextToSpeech.QUEUE_ADD, null);
 				}
 			}
 		});
@@ -64,62 +102,94 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	//default
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        	
+       
     	super.onCreate(savedInstanceState);
     	setContentView(R.layout.main);
         Log.i("LETS GO!","OnCreate");
-    	//Settings
-		setRequestedOrientation(0); //stupid method crashes the app!!!!!!AAARGGGHH RRAAAGEE
+    	
+        //Settings
+		//setRequestedOrientation(0); //stupid method crashes the app!!!!!!AAARGGGHH RRAAAGEE
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		AudioManager aM = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		aM.setStreamVolume(AudioManager.STREAM_MUSIC, aM.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-
+		
+		//TextView
+		textTOP = (TextView) findViewById(R.id.displayTOP);
+		textBOT = (TextView) findViewById(R.id.displayBOTTOM);
+		textMID = (TextView) findViewById(R.id.displayMID);
+		
+		//Gesture
 		golw = (GestureOverlayView) findViewById(R.id.gesturearea);
 		
 		golw.setGestureColor(Color.BLUE);
 		golw.setGestureVisible(true);
 		golw.setUncertainGestureColor(Color.RED);
+		golw.setGestureStrokeType(GestureOverlayView.GESTURE_STROKE_TYPE_MULTIPLE);
 		
 		golw.addOnGesturePerformedListener(this);
+		
 		gls = GestureLibraries.fromRawResource(this,R.raw.gestures);
+		gls.setOrientationStyle(GestureStore.ORIENTATION_INVARIANT);
+		gls.setSequenceType(GestureStore.SEQUENCE_INVARIANT);
+		
+		
 		if(!gls.load()){
 			Log.i("GESTURELIB","Gesture Library failed to load");
 		}
 		
-		Button key1 = (Button) findViewById(R.id.button1);
-		Button key2 = (Button) findViewById(R.id.button2);
-		Button key3 = (Button) findViewById(R.id.button3);
-		Button key4 = (Button) findViewById(R.id.button4);
-		Button key5 = (Button) findViewById(R.id.button5);
-		Button key6 = (Button) findViewById(R.id.button6);
-		Button key7 = (Button) findViewById(R.id.button7);
-		Button key8 = (Button) findViewById(R.id.button8);
-		Button key9 = (Button) findViewById(R.id.button9);
-		Button key0 = (Button) findViewById(R.id.button0);
-		Button keyClear = (Button) findViewById(R.id.buttonClear);
-		Button keySet = (Button) findViewById(R.id.buttonSet);
 		
-		key1.setOnClickListener(this);
-		key2.setOnClickListener(this);
-		key3.setOnClickListener(this);
-		key4.setOnClickListener(this);
-		key5.setOnClickListener(this);
-		key6.setOnClickListener(this);
-		key7.setOnClickListener(this);
-		key8.setOnClickListener(this);
-		key9.setOnClickListener(this);
-		key0.setOnClickListener(this);
+		pronounce_toLower("Ave", "Avenue");
+		pronounce_toLower("HS", "High School");
+		pronounce_toLower("Blvd", "Boulevard");
+		pronounce_toLower("Ln","Lane");
+		pronounce_toLower("Rd", "Road");
+		
+		
+		//Buttons
+		ImageButton keyClear = (ImageButton) findViewById(R.id.buttonClear);
+		ImageButton keySet = (ImageButton) findViewById(R.id.buttonSet);
+		
 		keySet.setOnClickListener(this);
 		keyClear.setOnClickListener(this);
 		
+		//Images
 		changeVisibility(R.id.search,View.INVISIBLE);
 		changeVisibility(R.id.fence, View.INVISIBLE);
 		changeVisibility(R.id.pr, View.INVISIBLE);
 		changeVisibility(R.id.leftArrow, View.INVISIBLE);
 		changeVisibility(R.id.rightArrow, View.INVISIBLE);
 	
-		transit.setupRoutes(this,getResources().openRawResource(R.raw.route_manifest));
-	
+		spf = getSharedPreferences("sharedPreferences", 0);
+		
+		//Connect to client
+		//get the hash (checksum) from preferences
+		myClient = new Client(Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID), spf.getString("hash", "NO_CHECKSUM"));
+		myClient.connectToServer("horc.net", 65499);
+		
+		if(myClient.getXmlData()!=null){
+			Log.i("INFO","Saving file");
+			fio.saveFile("route_manifest.xml", myClient.getXmlData());
+			SharedPreferences.Editor editMe = spf.edit();
+			editMe.putString("hash", myClient.getHash());
+			editMe.commit();
+		}else{
+			Log.i("INFO","Not saving file");
+		}
+		
+		
+		
+		//check to see if the file exists
+		if(fio.getFileStream("route_manifest.xml")!=null){
+			Log.i("INFO","file exists");
+			transit.setupRoutes(this,fio.getFileStream("route_manifest.xml"));
+			
+		}	
+		else{
+			//use system default
+			Log.i("INFO","using default");
+			transit.setupRoutes(this,getResources().openRawResource(R.raw.route_manifest));
+		}
+		Log.i("INFO","Whats up I am done");
 		manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		listener = new LocationListener() {
 			
@@ -170,10 +240,6 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	
 	public void setRoute(){
 		
-		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
-		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
-		TextView textMID = (TextView) findViewById(R.id.displayMID);
-		
 		//route = null && pr = null
 		if(transit.selectFocus() == null && transit.prFocus() == null){
 			textTOP.setText("No Route Pattern Set");
@@ -221,16 +287,13 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				}
 				
 				transit.setApeshit(false);
-				manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
+				manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
 			}
 		}	
 	}
 	
 	private void UI_multiSelect(int iD){
 		
-		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
-		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
-		TextView textMID = (TextView) findViewById(R.id.displayMID);
 		
 		switch(iD){
 			case R.id.buttonSet: //accepted
@@ -251,7 +314,7 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 				}
 
 				transit.setApeshit(false);
-				manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, listener);
+				manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
 				
 				transit.setMulti(0);
 				transit.setUIFocus(0);
@@ -260,146 +323,122 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	}
 	
 	private void UI_PR(int iD){
-		boolean addInput = true;
-
-		Button keyClear = (Button) findViewById(R.id.buttonClear);
-		keyClear.setText("BKSP");
-		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
-		TextView textMID = (TextView) findViewById(R.id.displayMID);
-		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
-	
-		if(textBOT.getText().toString().length()>12){addInput = false;}
 		
-		switch (iD) {
-		case R.id.button0:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "0");
-			break;
-		case R.id.button1:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "1");
-			break;
-		case R.id.button2:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "2");
-			break;
-		case R.id.button3:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "3");
-			break;
-		case R.id.button4:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "4");
-			break;
-		case R.id.button5:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "5");
-			break;
-		case R.id.button6:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "6");
-			break;
-		case R.id.button7:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "7");
-			break;
-		case R.id.button8:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "8");
-			break;
-		case R.id.button9:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "9");
-			break;
-		case R.id.buttonClear:
-			if(transit.PRStart()){
+		ImageButton keyClear = (ImageButton) findViewById(R.id.buttonClear);
+		keyClear.setOnLongClickListener(this);
+		keyClear.setImageResource(R.drawable.bkspbutton);
 		
-				changeVisibility(R.id.pr, View.INVISIBLE);
-				
-				manager.removeUpdates(listener);
-				keyClear.setOnLongClickListener(this);
-				if(transit.routeFocus()!=null) transit.resetApproach();
-				
-				textTOP.setText("Enter P/R Code");
-				textMID.setText("");
-				textBOT.setText("");
-				transit.setPRStart(false);
-				
-			}else if(textBOT.getText().toString().length()>0) textBOT.setText(textBOT.getText().toString().substring(0,textBOT.getText().toString().length()-1));
-			break;
-		case R.id.buttonSet:
+		switch(iD){
+			case R.id.buttonClear:
+				if(transit.PRStart()){
 
-			transit.selectPR(textBOT.getText().toString());
-			setRoute();
-			keyClear.setOnLongClickListener(null);
-			transit.setPRStart(true);
-			transit.setUIFocus(0);
-			keyClear.setText("P/R");
-			break;
+					changeVisibility(R.id.pr, View.INVISIBLE);
+
+					manager.removeUpdates(listener);
+					keyClear.setOnLongClickListener(this);
+					if(transit.routeFocus()!=null) transit.resetApproach();
+
+					textTOP.setText("Enter P/R Code");
+					textMID.setText("");
+					textBOT.setText("");
+					transit.setPRStart(false);
+
+				}else if(textBOT.getText().toString().length()>0) 
+					textBOT.setText(textBOT.getText().toString().substring(0,textBOT.getText().toString().length()-1));
+				break;
+			case R.id.buttonSet:
+				transit.selectPR(textBOT.getText().toString());
+				setRoute();
+				keyClear.setOnLongClickListener(null);
+				transit.setPRStart(true);
+				transit.setUIFocus(0);
+				keyClear.setImageResource(R.drawable.prbutton);
+				break;
 		}
 	}
 	
 	private void UI_Destination(int iD){
+		ImageButton keyClear = (ImageButton) findViewById(R.id.buttonClear);
+		keyClear.setOnLongClickListener(this);
+		keyClear.setImageResource(R.drawable.bkspbutton);
+		
+		switch(iD){
+			case R.id.buttonClear:
+				if(textBOT.getText().toString().length()>0) 
+					textBOT.setText(textBOT.getText().toString().substring(0,textBOT.getText().toString().length()-1));
+				break;
+			case R.id.buttonSet:
+				
+				if(transit.isSetCode()){
+
+					manager.removeUpdates(listener);
+					keyClear.setOnLongClickListener(this);
+					if(transit.routeFocus()!=null) transit.resetApproach();
+
+					changeVisibility(R.id.search, View.INVISIBLE);
+
+					textTOP.setText("Destination Number");
+					textMID.setText("");
+					textBOT.setText("");
+
+					transit.setCode(false);
+				}
+				else{
+
+					transit.selectRoute(textBOT.getText().toString());
+					transit.setUIFocus(0);
+					setRoute();
+					keyClear.setOnLongClickListener(null);
+					keyClear.setImageResource(R.drawable.prbutton);
+					transit.setCode(true);
+				}
+				break;
+		}
+		
+	}
+	
+	private void classifyGesture(final String name){
 		boolean addInput = true;
 		
-		Button keyClear = (Button) findViewById(R.id.buttonClear);
-		keyClear.setText("BKSP");
-		TextView textTOP = (TextView) findViewById(R.id.displayTOP);
-		TextView textMID = (TextView) findViewById(R.id.displayMID);
-		TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
-	
 		if(textBOT.getText().toString().length()>12){addInput = false;}
-		
-		switch (iD) {
-		case R.id.button0:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "0");
-			break;
-		case R.id.button1:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "1");
-			break;
-		case R.id.button2:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "2");
-			break;
-		case R.id.button3:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "3");
-			break;
-		case R.id.button4:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "4");
-			break;
-		case R.id.button5:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "5");
-			break;
-		case R.id.button6:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "6");
-			break;
-		case R.id.button7:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "7");
-			break;
-		case R.id.button8:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "8");
-			break;
-		case R.id.button9:
-			if(addInput)textBOT.setText(textBOT.getText().toString() + "9");
-			break;
-		case R.id.buttonClear:
-			if(textBOT.getText().toString().length()>0) textBOT.setText(textBOT.getText().toString().substring(0,textBOT.getText().toString().length()-1));
-			break;
-		case R.id.buttonSet:
+
+		if(name.equals("leftSwipe") && transit.getUIFocus()==10){
 			
-			if(transit.isSetCode()){
-				
-				manager.removeUpdates(listener);
-				keyClear.setOnLongClickListener(this);
-				if(transit.routeFocus()!=null) transit.resetApproach();
-				
-				changeVisibility(R.id.search, View.INVISIBLE);
-				
-				textTOP.setText("Destination Number");
+			if(transit.multiDest()>0){
+
+				transit.setMulti(transit.multiDest()-1);
+				if(transit.multiDest()==0) changeVisibility(R.id.leftArrow, View.INVISIBLE);
+				else changeVisibility(R.id.leftArrow, View.VISIBLE);
+				if(transit.multiDest()==transit.selectFocus().size()-1) changeVisibility(R.id.rightArrow, View.INVISIBLE);
+				else changeVisibility(R.id.rightArrow, View.VISIBLE);
+
+				transit.setFocus(transit.selectFocus().get(transit.multiDest()));
+				textTOP.setText(transit.routeName() + " " + transit.headSign());
 				textMID.setText("");
-				textBOT.setText("");
-				
-				transit.setCode(false);
+				textBOT.setText("Select Destination");
 			}
-			else{
-	
-				transit.selectRoute(textBOT.getText().toString());
-				transit.setUIFocus(0);
-				setRoute();
-				keyClear.setOnLongClickListener(null);
-				keyClear.setText("P/R");
-				transit.setCode(true);
+			
+		}
+		else if(name.equals("rightSwipe") && transit.getUIFocus()==10){
+			
+			if(transit.multiDest()<transit.selectFocus().size()-1){
+				transit.setMulti(transit.multiDest()+1);
+
+				if(transit.multiDest()==0) changeVisibility(R.id.leftArrow, View.INVISIBLE);
+				else changeVisibility(R.id.leftArrow, View.VISIBLE);
+				if(transit.multiDest()==transit.selectFocus().size()-1) changeVisibility(R.id.rightArrow, View.INVISIBLE);
+				else changeVisibility(R.id.rightArrow, View.VISIBLE);
+
+				transit.setFocus(transit.selectFocus().get(transit.multiDest()));
+				textTOP.setText(transit.routeName() + " " + transit.headSign());
+				textMID.setText("");
+				textBOT.setText("Select Destination");	
 			}
-			break;
+			
+		}
+		else{
+			
+			if(addInput && !name.equals("rightSwipe") && !name.equals("leftSwipe")) textBOT.setText(textBOT.getText().toString() + name);
 		}
 	}
 	
@@ -413,14 +452,6 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 	  				break;
 	  			case R.id.buttonSet:
 	  				UI_Destination(cue.getId());
-	  				break;
-	  			case R.id.button0:
-	  				if(transit.routeFocus()!=null)speakToMe(transit.terminal());
-	  				transit.setUIFocus(0);
-	  				break;
-	  			case R.id.button5:
-	  				speakToMe("STOP REQUESTED");
-	  				transit.setUIFocus(0);
 	  				break;
 	  			case 10:
 	  				UI_multiSelect(cue.getId());
@@ -436,60 +467,14 @@ public class main extends Activity implements OnClickListener, OnLongClickListen
 		textBOT.setText("");
 		return false;}
 
-	
 	public void onGesturePerformed(GestureOverlayView arg0, Gesture g) {
-
-		// TODO Auto-generated method stub
+		
 		ArrayList<Prediction> predictions = gls.recognize(g);
-		Log.i("GESTURE","Gesture called!");
 		if(predictions.size()>0){
+			
 			Prediction prediction = predictions.get(0);
-			if(prediction.score>1){
-				String s = prediction.name;
-				
-				Log.i("GESTURE",s);
-				
-				if(s.contains("leftSwipe")){
-
-					TextView textTOP = (TextView) findViewById(R.id.displayTOP);
-					TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
-					TextView textMID = (TextView) findViewById(R.id.displayMID);
-					
-					if(transit.multiDest()>0){
-						
-						transit.setMulti(transit.multiDest()-1);
-						if(transit.multiDest()==0) changeVisibility(R.id.leftArrow, View.INVISIBLE);
-						else changeVisibility(R.id.leftArrow, View.VISIBLE);
-						if(transit.multiDest()==transit.selectFocus().size()-1) changeVisibility(R.id.rightArrow, View.INVISIBLE);
-						else changeVisibility(R.id.rightArrow, View.VISIBLE);
-						
-						transit.setFocus(transit.selectFocus().get(transit.multiDest()));
-						textTOP.setText(transit.routeName() + " " + transit.headSign());
-						textMID.setText("");
-						textBOT.setText("Select Destination");
-					}
-				}
-				else if(s.contains("rightSwipe")){
-
-					TextView textTOP = (TextView) findViewById(R.id.displayTOP);
-					TextView textBOT = (TextView) findViewById(R.id.displayBOTTOM);
-					TextView textMID = (TextView) findViewById(R.id.displayMID);
-					
-					if(transit.multiDest()<transit.selectFocus().size()-1){
-						transit.setMulti(transit.multiDest()+1);
-						
-						if(transit.multiDest()==0) changeVisibility(R.id.leftArrow, View.INVISIBLE);
-						else changeVisibility(R.id.leftArrow, View.VISIBLE);
-						if(transit.multiDest()==transit.selectFocus().size()-1) changeVisibility(R.id.rightArrow, View.INVISIBLE);
-						else changeVisibility(R.id.rightArrow, View.VISIBLE);
-						
-						transit.setFocus(transit.selectFocus().get(transit.multiDest()));
-						textTOP.setText(transit.routeName() + " " + transit.headSign());
-						textMID.setText("");
-						textBOT.setText("Select Destination");	
-					}
-				}
-			}
+		
+			if(prediction.score>0) classifyGesture(prediction.name.trim());
 		}
 	
 	}

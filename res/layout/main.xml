@@ -2,234 +2,147 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal" >
-    
-	<android.gesture.GestureOverlayView
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:id="@+id/gesturearea">
 
-		<LinearLayout
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    android:baselineAligned="false"
-		    android:orientation="vertical"
-		    android:weightSum="2" >
+    <android.gesture.GestureOverlayView
+        android:id="@+id/gesturearea"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-		    <RelativeLayout
-		        android:id="@+id/display"
-		        android:layout_width="match_parent"
-		        android:layout_height="fill_parent"
-		        android:layout_weight="1"
-		        android:orientation="vertical"
-		        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:weightSum="1" >
 
-		        <TextView
-		            android:id="@+id/displayMID"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_centerHorizontal="true"
-		            android:layout_centerVertical="true"
-		            android:gravity="center"
-		            android:orientation="vertical"
-		            android:text="@string/prmsgs"
-		            android:textAppearance="?android:attr/textAppearanceLarge" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".10"
+                android:orientation="vertical"
+                android:weightSum="1" >
 
-		        <TextView
-		            android:id="@+id/displayTOP"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_above="@+id/displayMID"
-		            android:layout_centerHorizontal="true"
-		            android:gravity="center"
-		            android:orientation="vertical"
-		            android:text="@string/tRaNsIt"
-		            android:textAppearance="?android:attr/textAppearanceLarge" />
+                <RelativeLayout
+                    android:id="@+id/display"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight=".25"
+                    android:orientation="vertical" >
+                    		        
+					<TextView
+			            android:id="@+id/displayMID"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_centerHorizontal="true"
+			            android:layout_centerVertical="true"
+			            android:gravity="center"
+			            android:orientation="vertical"
+			            android:text="@string/prmsgs"
+			            android:textAppearance="?android:attr/textAppearanceLarge" />
+	
+			        <TextView
+			            android:id="@+id/displayTOP"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_above="@+id/displayMID"
+			            android:layout_centerHorizontal="true"
+			            android:gravity="center"
+			            android:orientation="vertical"
+			            android:text="@string/tRaNsIt"
+			            android:textAppearance="?android:attr/textAppearanceLarge" />
+	
+			        <TextView
+			            android:id="@+id/displayBOTTOM"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:layout_below="@+id/displayMID"
+			            android:layout_centerHorizontal="true"
+			            android:gravity="center"
+			            android:orientation="vertical"
+			            android:text="@string/TaLkEr"
+			            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-		        <TextView
-		            android:id="@+id/displayBOTTOM"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_below="@+id/displayMID"
-		            android:layout_centerHorizontal="true"
-		            android:gravity="center"
-		            android:orientation="vertical"
-		            android:text="@string/TaLkEr"
-		            android:textAppearance="?android:attr/textAppearanceLarge" />
+			        <ImageView
+			            android:id="@+id/rightArrow"
+			            android:layout_width="50dp"
+			            android:layout_height="50dp"
+			            android:layout_alignParentRight="true"
+			            android:layout_centerVertical="true"
+			            android:contentDescription="@string/image"
+			            android:src="@drawable/rightarrow" />
 
-		        <ImageView
-		            android:id="@+id/pr"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_alignParentLeft="true"
-		            android:layout_alignParentTop="true"
-		            android:contentDescription="@string/image"
-		            android:src="@drawable/prcode" />
+			        <ImageView
+			            android:id="@+id/leftArrow"
+			            android:layout_width="50dp"
+			            android:layout_height="50dp"
+			            android:layout_alignParentLeft="true"
+			            android:layout_alignTop="@+id/rightArrow"
+			            android:contentDescription="@string/image"
+			            android:src="@drawable/leftarrow" />
+			        
+                </RelativeLayout>
 
-		        <ImageView
-		            android:id="@+id/search"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_alignParentRight="true"
-		            android:layout_alignParentTop="true"
-		            android:contentDescription="@string/image"
-		            android:src="@drawable/searching" />
+                <RelativeLayout
+                    android:id="@+id/display_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight=".75"
+                    android:orientation="horizontal" >
 
 		        <ImageView
 		            android:id="@+id/fence"
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
-		            android:layout_alignLeft="@+id/search"
-		            android:layout_below="@+id/search"
+		            android:layout_centerVertical="true"
+		            android:layout_toRightOf="@+id/search"
 		            android:contentDescription="@string/image"
 		            android:src="@drawable/geofence" />
 
 		        <ImageView
-		            android:id="@+id/leftArrow"
-		            android:layout_width="50dp"
-		            android:layout_height="50dp"
-		            android:layout_alignParentLeft="true"
-		            android:layout_alignTop="@+id/fence"
+		            android:id="@+id/search"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_centerHorizontal="true"
+		            android:layout_centerVertical="true"
 		            android:contentDescription="@string/image"
-		            android:src="@drawable/leftarrow" />
+		            android:src="@drawable/searching" />
 
 		        <ImageView
-		            android:id="@+id/rightArrow"
-		            android:layout_width="50dp"
-		            android:layout_height="50dp"
-		            android:layout_alignLeft="@+id/fence"
-		            android:layout_alignTop="@+id/fence"
+		            android:id="@+id/pr"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_centerVertical="true"
+		            android:layout_toLeftOf="@+id/search"
 		            android:contentDescription="@string/image"
-		            android:src="@drawable/rightarrow" />
+		            android:src="@drawable/prcode" />
 
-		    </RelativeLayout>
+                </RelativeLayout>
+            </LinearLayout>
 
-		    <LinearLayout
-		        android:id="@+id/buttons"
-		        android:layout_width="match_parent"
-		        android:layout_height="fill_parent"
-		        android:layout_weight="1"
-		        android:orientation="vertical"
-		        android:weightSum="2" >
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".90"
+                android:orientation="vertical"
+                android:weightSum="2" >
 
-		        <LinearLayout
-		            android:layout_width="match_parent"
-		            android:layout_height="fill_parent"
-		            android:layout_weight="1"
-		            android:orientation="horizontal"
-		            android:weightSum="5.75" >
+                <ImageButton
+                    android:id="@+id/buttonClear"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:scaleType="center"
+                    android:src="@drawable/prbutton" />
 
-		            <Button
-		                android:id="@+id/button0"
-		                android:layout_width="fill_parent"
-		                android:layout_height="match_parent"
-		                android:layout_weight="1"
-		                android:text="@string/zero"
-		                android:textSize="36sp" />
+                <ImageButton
+                    android:id="@+id/buttonSet"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/setbutton" />
 
-					<Button
-					    android:id="@+id/button1"
-					    android:layout_width="fill_parent"
-					    android:layout_height="match_parent"
-					    android:layout_weight="1"
-					    android:text="@string/one"
-					    android:textSize="36sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </android.gesture.GestureOverlayView>
 
-		            <Button
-		                android:id="@+id/button2"
-		                android:layout_width="fill_parent"
-		                android:layout_height="match_parent"
-		                android:layout_weight="1"
-		                android:text="@string/two"
-		                android:textSize="36sp" />
-
-		            <Button
-		                android:id="@+id/button3"
-		                android:layout_width="fill_parent"
-		                android:layout_height="match_parent"
-		                android:layout_weight="1"
-		                android:text="@string/three"
-		                android:textSize="36sp" />
-
-		            <Button
-		                android:id="@+id/button4"
-		                android:layout_width="fill_parent"
-		                android:layout_height="match_parent"
-		                android:layout_gravity="center"
-		                android:layout_weight="1"
-		                android:text="@string/four"
-		                android:textSize="36sp" />
-
-					<Button
-					    android:id="@+id/buttonClear"
-					    android:layout_width="fill_parent"
-					    android:layout_height="match_parent"
-					    android:layout_weight=".75"
-					    android:gravity="center"
-					    android:text="@string/BKSP"
-					    android:textSize="36sp" />
-										
-		        </LinearLayout>
-		        
-				<LinearLayout
-				    android:layout_width="match_parent"
-				    android:layout_height="fill_parent"
-				    android:layout_weight="1"
-				    android:weightSum="5.75"
-				    android:orientation="horizontal" >
-
-				    <Button
-				        android:id="@+id/button5"
-				        android:layout_width="fill_parent"
-				        android:layout_height="match_parent"
-				        android:layout_weight="1"
-				        android:text="@string/five"
-				        android:textSize="36sp" />
-
-				    <Button
-				        android:id="@+id/button6"
-				        android:layout_width="fill_parent"
-				        android:layout_height="match_parent"
-				        android:layout_weight="1"
-				        android:text="@string/six"
-				        android:textSize="36sp" />
-
-				    <Button
-				        android:id="@+id/button7"
-				        android:layout_width="match_parent"
-				        android:layout_height="match_parent"
-				        android:layout_weight="1"
-				        android:text="@string/seven"
-				        android:textSize="36sp" />
-
-				    <Button
-				        android:id="@+id/button8"
-				        android:layout_width="fill_parent"
-				        android:layout_height="match_parent"
-				        android:layout_weight="1"
-				        android:text="@string/eight"
-				        android:textSize="36sp" />
-
-				    <Button
-				        android:id="@+id/button9"
-				        android:layout_width="fill_parent"
-				        android:layout_height="match_parent"
-				        android:layout_weight="1"
-				        android:text="@string/nine"
-				        android:textSize="36sp" />
-
-				    <Button
-				        android:id="@+id/buttonSet"
-				        android:layout_width="fill_parent"
-				        android:layout_height="match_parent"
-				        android:layout_weight=".75"
-				        android:text="@string/SET"
-				        android:textSize="36sp" />
-
-				</LinearLayout>
-
-		    </LinearLayout>
-		</LinearLayout>
-	</android.gesture.GestureOverlayView>
 </LinearLayout>
-
-

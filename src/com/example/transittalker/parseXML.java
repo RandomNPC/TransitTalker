@@ -14,7 +14,7 @@ public class parseXML extends DefaultHandler{
 	private double minDistance;
 	private struct list;
 	
-	parseXML(double min){
+	public parseXML(double min){
 		route = new LinkedList<struct>();
 		code = new LinkedList<prCode>();
 		minDistance = min;
@@ -22,7 +22,7 @@ public class parseXML extends DefaultHandler{
 	
 	List<struct> getXMLrouteList(){return route;}
 	List<prCode> getXMLprCode(){return code;}
-
+	
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
@@ -32,10 +32,10 @@ public class parseXML extends DefaultHandler{
 				list.setRouteInfo(attributes.getValue("code"), attributes.getValue("name"), attributes.getValue("dest"),"", attributes.getValue("say"));
 		}	//pr code , terminal
 		else if(localName.equals("stop")){
-			list.addStop(Double.parseDouble(attributes.getValue("lat")), Double.parseDouble(attributes.getValue("lon")), attributes.getValue("title"), attributes.getValue("dir"));
+			list.addStop(Double.valueOf(attributes.getValue("lat")), Double.valueOf(attributes.getValue("lon")), attributes.getValue("title"), attributes.getValue("dir"));
 		}
 		else if(localName.equals("point")){
-			list.addTopath(Double.parseDouble(attributes.getValue("lat")), Double.parseDouble(attributes.getValue("lon")));
+			list.addTopath(Double.valueOf(attributes.getValue("lat")), Double.valueOf(attributes.getValue("lon")));
 		}
 		else if(localName.equals("prcode")){
 			code.add(new prCode(attributes.getValue("code"),attributes.getValue("msg")));
@@ -48,6 +48,6 @@ public class parseXML extends DefaultHandler{
 		if(qName.equals("path")){
 			route.add(list);
 			list=null;
-		}
+		} 
 	}	
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -46,7 +47,7 @@ public class TransitMain{
 	//universal function
 	private boolean isEqual(String marco, String polo){
 		if(marco.length() > 0 && polo.length() > 0 && marco.length() < 4 && polo.length()<4){
-			return (Integer.parseInt(marco) == Integer.parseInt(polo))? true:false;
+			return marco.contains(polo);
 		}
 		else return false;
 		}
@@ -62,10 +63,10 @@ public class TransitMain{
 	int multiDest(){return multiple;}
 	
 	//select route
-	public void selectRoute(String rC){
+	public void selectRoute(String raw){
 		List<struct> list = new LinkedList<struct>();
 		for(struct l: route){ 
-			if(isEqual(rC,l.routeCode())){
+			if(isEqual(raw.toLowerCase(Locale.getDefault()),l.routeName().toLowerCase(Locale.getDefault())) || isEqual(raw.toLowerCase(Locale.getDefault()), l.routeCode().toLowerCase(Locale.getDefault()))){
 				list.add(l);
 			}
 		}
