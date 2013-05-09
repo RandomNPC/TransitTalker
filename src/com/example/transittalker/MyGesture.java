@@ -31,7 +31,6 @@ public class MyGesture extends GestureDetector.SimpleOnGestureListener implement
 		else myView.setOnTouchListener(null);
 	}
 
-	@Override
 	public boolean onTouch(View arg0, MotionEvent event) {
 		return gd.onTouchEvent(event);
 	}

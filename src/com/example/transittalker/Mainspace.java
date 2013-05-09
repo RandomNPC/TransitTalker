@@ -199,4 +199,9 @@ public class Mainspace extends Activity implements Route.Listener, GeoCache.List
 			textBOT.setText("Select Destination");
 		}
 	}
+
+	@Override
+	public void speakDest() {
+		if(ref.route()!=null)ttm.speak(ref.route().br_an());
+	}
 }

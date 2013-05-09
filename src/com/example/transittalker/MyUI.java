@@ -63,6 +63,7 @@ public class MyUI implements OnClickListener,OnLongClickListener{
 		public void newDestination(String dest);
 		public void newPR(String pr);
 		public void destinationPicked();
+		public void speakDest();
 	}
 	
 	void changeVisibility(int imageID, int status){
@@ -156,6 +157,12 @@ public class MyUI implements OnClickListener,OnLongClickListener{
 			btnClear.setText("BKSP");
 			
 			switch(focus){
+				case R.id.button0:
+					btnClear.setOnLongClickListener(null);
+					btnClear.setText("P/R");
+					listen.speakDest();
+					focus = 0;
+					return;
 				case R.id.buttonClear: //PR code
 					changeVisibility(R.id.pr, View.INVISIBLE);
 					textTOP.setText("Enter P/R Code");
