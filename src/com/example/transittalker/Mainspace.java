@@ -20,11 +20,13 @@ public class Mainspace extends Activity implements Route.Listener, GeoCache.List
 	
 	private TextView textTOP,textMID,textBOT;
 	
+	private static final int minDistance = 100;
+	
 	private void initialize(){
 		gc = new GeoCache(this);
 		ttm = new TalkToMe(this);
 		mui = new MyUI(this);
-		ref = new Route(this);
+		ref = new Route(this,minDistance); //testing at 100
 		dt = new DataTransfer(this);
 		offcourse = false;
 		mg = new MyGesture(this);
@@ -111,13 +113,11 @@ public class Mainspace extends Activity implements Route.Listener, GeoCache.List
 			}
 		}
 	}
-
 	
 	public void resetRoutes() {
 		gc.stopListening();
 		if(ref.route()!=null)ref.route().br_reset();
 	}
-
 
 	public void newDestination(String dest) {
 		mui.setUI(0);
@@ -129,14 +129,12 @@ public class Mainspace extends Activity implements Route.Listener, GeoCache.List
 		ref.pr_query(pr);
 	}
 
-
 	public void destinationPicked() {
 		mg.enableTouchResponse(false);
 		changeVisibility(R.id.rightArrow,View.INVISIBLE);
 		changeVisibility(R.id.leftArrow,View.INVISIBLE);
 		single_result();
 	}
-
 
 	public void locationUpdated(Location obj) {
 		ref.route().br_setBusPos(obj);

@@ -757,7 +757,7 @@
   <stop lat="38.5462399" title="Russell Blvd &amp; Sycamore Ln " lon="-121.762" dir="EB"/>
   <stop lat="38.54251" title="La Rue Rd &amp; Orchard " lon="-121.7608899" dir="SB"/>
   <stop lat="38.53903" title="Hutchison Dr &amp; Bioletti Way " lon="-121.7557699" dir="EB"/>
-  <stop lat="38.5391399" title="Hutchison &amp; California " lon="-121.75309" dir="WB"/>
+  <stop lat="38.5391399" title="Hutchison &amp; California" lon="-121.75309" dir="WB"/>
   <path>
    <point lat="38.54624" lon="-121.762"/>
    <point lat="38.54627" lon="-121.75877"/>
@@ -963,7 +963,7 @@
   <stop lat="38.54877" title="Arlington Blvd &amp; Bucklebury Rd " lon="-121.7788" dir="SB"/>
   <stop lat="38.5373699" title="Hutchison Dr &amp; Health Sci Drive " lon="-121.76423" dir="EB"/>
   <stop lat="38.53903" title="Hutchison Dr &amp; Bioletti Way " lon="-121.7557699" dir="EB"/>
-  <stop lat="38.5391399" title="Hutchison &amp; California " lon="-121.75309" dir="WB"/>
+  <stop lat="38.5391399" title="Hutchison &amp; California" lon="-121.75309" dir="WB"/>
   <path>
    <point lat="38.54624" lon="-121.762"/>
    <point lat="38.54627" lon="-121.75877"/>

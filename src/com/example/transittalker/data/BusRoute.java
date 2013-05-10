@@ -126,6 +126,7 @@ public class BusRoute {
 	public void br_reset(){
 		for(BusStop checkStop = head; checkStop!=null; checkStop=checkStop.bs_Next()){checkStop.bs_setSil(false);}
 		pos = head;
+		tail.bs_setSil(false);
 	}
 	
 	public BusStop br_first(){return head;}

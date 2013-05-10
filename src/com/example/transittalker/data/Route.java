@@ -30,8 +30,9 @@ public class Route implements BusRoute.Listener{
 	
 	private List<BusRoute> query_route;
 	private List<PRCode> query_prcode;
+	private int minDistance;
 	
-	public Route(Mainspace m){
+	public Route(Mainspace m, int minDistance){
 		listen = m;
 		instance = this;
 		routes = new MultiHash<String, BusRoute>();
@@ -40,6 +41,7 @@ public class Route implements BusRoute.Listener{
 		query_prcode = null;
 		route_ptr = null;
 		prcode_ptr = null;
+		this.minDistance = minDistance;
 	}
 	
 	public void br_busApproaching(BusStop stop) {
@@ -154,7 +156,7 @@ public class Route implements BusRoute.Listener{
 			}
 			
 			publishProgress();
-			ParseXMLHandler parser = new ParseXMLHandler(1000,instance);
+			ParseXMLHandler parser = new ParseXMLHandler(minDistance,instance);
 			xr.setContentHandler(parser);
 			try {
 				xr.parse(new InputSource(is));
